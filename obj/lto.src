@@ -1,0 +1,2497 @@
+	section	.text,"ax",@progbits
+	assume	adl = 1
+	section	.text,"ax",@progbits
+	public	_drawView
+_drawView:
+	ld	hl, -37
+	call	__frameset
+	ld	hl, 1
+	push	hl
+	call	_gfx_FillScreen
+	pop	hl
+	ld	de, (_currentView)
+	push	de
+	pop	hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jr	nz, BB0_3
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, 24
+	push	hl
+	ld	hl, 73
+	push	hl
+	ld	hl, _title_data
+	push	hl
+	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 66
+	push	hl
+	ld	hl, 40
+	push	hl
+	call	_gfx_SetTextXY
+	pop	hl
+	pop	hl
+	ld	a, (_numLevelPacks)
+	or	a, a
+	jp	nz, BB0_20
+	ld	hl, _.str.1
+	push	hl
+	call	_gfx_PrintString
+	pop	hl
+	jp	BB0_23
+BB0_3:
+	ld	iy, 40
+	ld	bc, 2
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jp	nz, BB0_21
+	ld	hl, _levels_data
+	ld	e, -6
+	ld	(ix - 9), de
+	ld	e, 36
+	ld	(ix - 12), de
+	ld	de, 0
+	push	de
+	push	iy
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 10
+	push	hl
+	ld	hl, 73
+	push	hl
+	ld	hl, _title_data
+	push	hl
+	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, (_packTitle)
+	ld	de, 48
+	push	de
+	ld	de, 78
+	push	de
+	push	hl
+	call	_gfx_PrintStringXY
+	ld	iyl, 40
+	ld	c, 6
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	e, 0
+	ld	l, e
+	ld	(ix - 3), hl
+BB0_5:
+	ld	hl, (ix - 3)
+	ld	b, l
+	call	__bdivu
+	ld	iyh, a
+	ex	de, hl
+	ld	e, iyl
+	ld	d, iyh
+	ex	de, hl
+	mlt	hl
+	ld	b, e
+	ld	a, e
+	add	a, l
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	de, 54
+	add	hl, de
+	ld	(ix - 15), hl
+	ld	hl, (_packNumLevels)
+	ld	l, (hl)
+	ld	de, (ix - 3)
+	ld	a, e
+	cp	a, l
+	jp	nc, BB0_23
+	ld	(ix - 22), iy
+	ld	(ix - 19), b
+	ld	de, (ix - 3)
+	ld	b, e
+	call	__bdivu
+	ld	iy, (ix - 9)
+	ld	iyh, a
+	ex	de, hl
+	ld	e, iyl
+	ld	d, iyh
+	ex	de, hl
+	mlt	hl
+	ld	a, l
+	add	a, e
+	ld	bc, (ix - 12)
+	ld	b, a
+	ld	l, c
+	ld	h, b
+	mlt	hl
+	ld	de, 0
+	ld	e, l
+	ld	(ix - 37), de
+	ld	(ix - 9), iy
+	ex	de, hl
+	ld	d, iyh
+	ex	de, hl
+	ld	(ix - 12), bc
+	ld	l, c
+	mlt	hl
+	ld	a, l
+	add	a, 91
+	ld	(ix - 6), a
+	ld	hl, (ix - 3)
+	push	hl
+	call	_loadLevel
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	ld	l, (ix - 6)
+	ld	(ix - 18), hl
+	ld	hl, _map
+	push	hl
+	pop	iy
+	ld	bc, 0
+BB0_7:
+	push	bc
+	pop	hl
+	ld	de, 8
+	or	a, a
+	sbc	hl, de
+	jp	z, BB0_17
+	ld	(ix - 28), bc
+	push	bc
+	pop	hl
+	ld	c, 2
+	call	__ishl
+	ld	de, (ix - 18)
+	add	hl, de
+	ld	(ix - 31), hl
+	ld	hl, (ix - 15)
+	ld	(ix - 6), hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+BB0_9:
+	push	bc
+	pop	hl
+	ld	de, 8
+	or	a, a
+	sbc	hl, de
+	jr	z, BB0_16
+	ld	(ix - 25), iy
+	add	iy, bc
+	ld	a, (iy)
+	and	a, 7
+	ld	l, a
+	cp	a, 1
+	ld	(ix - 34), bc
+	jr	z, BB0_15
+	ld	a, l
+	cp	a, 3
+	jr	nz, BB0_13
+	ld	hl, 4
+	jr	BB0_15
+BB0_13:
+	ld	a, l
+	cp	a, 4
+	ld	a, 3
+	ld	l, a
+	jr	z, BB0_15
+	ld	a, 2
+	ld	l, a
+BB0_15:
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	hl, 4
+	push	hl
+	push	hl
+	ld	hl, (ix - 31)
+	push	hl
+	ld	hl, (ix - 6)
+	push	hl
+	call	_gfx_FillRectangle
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	bc, (ix - 34)
+	inc	bc
+	ld	de, 4
+	ld	hl, (ix - 6)
+	add	hl, de
+	ld	(ix - 6), hl
+	ld	iy, (ix - 25)
+	jr	BB0_9
+BB0_16:
+	ld	bc, (ix - 28)
+	inc	bc
+	lea	iy, iy + 8
+	jp	BB0_7
+BB0_17:
+	ld	a, (_levelIndex)
+	ld	l, a
+	ld	de, (ix - 3)
+	ld	a, e
+	cp	a, l
+	jr	nz, BB0_19
+	ld	hl, (_levelTitle)
+	ld	de, 74
+	push	de
+	ld	de, 64
+	push	de
+	push	hl
+	call	_gfx_PrintStringXY
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 3
+	push	hl
+	call	_gfx_SetColor
+	pop	hl
+	ld	de, 52
+	ld	hl, (ix - 37)
+	add	hl, de
+	push	hl
+	pop	bc
+	ld	de, -2
+	ld	iy, (ix - 18)
+	add	iy, de
+	ld	hl, 36
+	push	hl
+	push	hl
+	push	iy
+	push	bc
+	call	_gfx_Rectangle
+	ld	de, (ix - 3)
+	pop	hl
+	pop	hl
+	pop	hl
+	pop	hl
+BB0_19:
+	inc	e
+	ld	(ix - 3), de
+	ld	a, (ix - 19)
+	add	a, 36
+	ld	e, a
+	ld	c, 6
+	ld	iy, (ix - 22)
+	jp	BB0_5
+BB0_20:
+	ld	hl, _.str
+	push	hl
+	call	_gfx_PrintString
+	pop	hl
+	call	_listLevelPacks
+	jr	BB0_23
+BB0_21:
+	ld	bc, 3
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	jr	nz, BB0_23
+	ld	hl, _level_data
+	ld	de, 0
+	push	de
+	push	iy
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_SetTextFGColor
+	pop	hl
+	ld	hl, (_levelTitle)
+	ld	de, 16
+	push	de
+	push	hl
+	call	_printCentered
+	pop	hl
+	pop	hl
+	call	_drawTiles
+BB0_23:
+	ld	sp, ix
+	pop	ix
+	jp	_blitBuffer
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_printCentered
+_printCentered:
+	call	__frameset0
+	ld	iy, (ix + 6)
+	ld	l, 0
+BB1_1:
+	ld	de, 0
+	ld	e, l
+	lea	bc, iy
+	add	iy, de
+	inc	l
+	ld	a, (iy)
+	push	bc
+	pop	iy
+	or	a, a
+	jr	nz, BB1_1
+	ex	de, hl
+	ld	bc, -4
+	call	__imulu
+	ld	de, 160
+	add	hl, de
+	ld	de, 0
+	ld	e, (ix + 9)
+	push	de
+	push	hl
+	push	iy
+	call	_gfx_PrintStringXY
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_drawTiles
+_drawTiles:
+	ld	hl, -6
+	call	__frameset
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_drawWalls
+	pop	hl
+	call	_drawEntities
+	ld	hl, 1
+	push	hl
+	call	_drawWalls
+	pop	hl
+	call	_drawTotals
+	call	_drawErrors
+	ld	hl, (_tileset_tiles_data)
+	ld	(ix - 3), hl
+	ld	a, (_cursorCol)
+	ld	iy, 0
+	ld	iyl, a
+	ld	c, 4
+	lea	hl, iy
+	call	__ishl
+	ld	de, 96
+	add	hl, de
+	ld	(ix - 6), hl
+	ld	a, (_cursorRow)
+	ld	iyl, a
+	lea	hl, iy
+	call	__ishl
+	ld	de, 72
+	add	hl, de
+	push	hl
+	ld	hl, (ix - 6)
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_RLETSprite
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_drawWalls
+_drawWalls:
+	ld	hl, -21
+	call	__frameset
+	ld	a, -1
+	or	a, a
+	sbc	hl, hl
+	ld	de, 9
+	push	hl
+	pop	bc
+BB3_1:
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jp	z, BB3_26
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	(ix - 15), hl
+	push	bc
+	pop	hl
+	ld	(ix - 3), bc
+	ld	c, 4
+	call	__ishl
+	ld	bc, (ix - 3)
+	ld	de, 88
+	add	hl, de
+	ld	(ix - 18), hl
+	ld	l, c
+	dec	l
+	ld	de, 0
+	ld	(ix - 11), l
+	ld	e, l
+	ld	(ix - 21), de
+	ld	iyh, d
+	ld	hl, 64
+	ex	de, hl
+	ld	hl, _map
+	ld	(ix - 6), hl
+	ex	de, hl
+BB3_3:
+	ld	(ix - 10), hl
+	ld	de, 208
+	or	a, a
+	sbc	hl, de
+	jp	z, BB3_25
+	ld	(ix - 12), a
+	push	af
+	ld	a, iyh
+	ld	(ix - 7), a
+	pop	af
+	dec	iyh
+	ld	a, iyh
+	or	a, (ix - 11)
+	cp	a, 8
+	ld	a, 1
+	jr	nc, BB3_6
+	or	a, a
+	sbc	hl, hl
+	ex	de, hl
+	ld	e, iyh
+	ex	de, hl
+	ld	c, 3
+	call	__ishl
+	push	hl
+	pop	bc
+	ld	hl, _map
+	add	hl, bc
+	ld	bc, (ix - 3)
+	ld	de, (ix - 21)
+	add	hl, de
+	ld	a, (hl)
+BB3_6:
+	and	a, 7
+	ld	d, a
+	ld	a, iyh
+	or	a, c
+	cp	a, 8
+	ld	a, 1
+	jr	nc, BB3_8
+	or	a, a
+	sbc	hl, hl
+	ex	de, hl
+	ld	e, iyh
+	ex	de, hl
+	ld	c, 3
+	call	__ishl
+	push	hl
+	pop	bc
+	ld	hl, _map
+	add	hl, bc
+	ld	bc, (ix - 3)
+	add	hl, bc
+	ld	a, (hl)
+BB3_8:
+	and	a, 7
+	cp	a, 1
+	ld	l, 2
+	jr	z, BB3_10
+	ld	l, 0
+BB3_10:
+	ld	a, d
+	cp	a, 1
+	ld	e, 1
+	ld	d, (ix - 7)
+	jr	z, BB3_12
+	ld	e, 0
+BB3_12:
+	ld	a, l
+	add	a, e
+	ld	l, a
+	ld	a, (ix - 11)
+	or	a, d
+	cp	a, 8
+	ld	a, 1
+	jr	nc, BB3_14
+	ld	iy, (ix - 6)
+	ld	de, (ix - 15)
+	add	iy, de
+	ld	a, (iy)
+	ld	d, (ix - 7)
+BB3_14:
+	and	a, 7
+	cp	a, 1
+	ld	e, 4
+	jr	z, BB3_16
+	ld	e, 0
+BB3_16:
+	ld	a, l
+	add	a, e
+	ld	l, a
+	ld	a, d
+	or	a, c
+	cp	a, 8
+	ld	a, 1
+	jr	nc, BB3_18
+	ld	iy, (ix - 6)
+	add	iy, bc
+	ld	a, (iy)
+	ld	d, (ix - 7)
+BB3_18:
+	and	a, 7
+	cp	a, 1
+	ld	e, 8
+	jr	z, BB3_20
+	ld	e, 0
+BB3_20:
+	ld	a, l
+	add	a, e
+	ld	e, a
+	and	a, 12
+	ld	hl, (ix + 6)
+	ld	bc, 1
+	or	a, a
+	sbc	hl, bc
+	jr	nz, BB3_22
+	or	a, a
+	jr	nz, BB3_23
+	jr	BB3_24
+BB3_22:
+	or	a, a
+	jr	nz, BB3_24
+BB3_23:
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	c, e
+	ld	iy, _tileIds
+	add	iy, bc
+	ld	l, (iy)
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _walls_tiles_data
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (ix - 10)
+	push	de
+	ld	de, (ix - 18)
+	push	de
+	push	hl
+	call	_gfx_RLETSprite
+	ld	d, (ix - 7)
+	pop	hl
+	pop	hl
+	pop	hl
+BB3_24:
+	ld	iy, (ix - 6)
+	lea	iy, iy + 8
+	ld	(ix - 6), iy
+	ld	iyh, d
+	ld	de, 16
+	ld	hl, (ix - 10)
+	add	hl, de
+	inc	iyh
+	ld	a, (ix - 12)
+	ld	bc, (ix - 3)
+	jp	BB3_3
+BB3_25:
+	inc	bc
+	inc	a
+	ld	de, 9
+	jp	BB3_1
+BB3_26:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_drawEntities
+_drawEntities:
+	ld	hl, -15
+	call	__frameset
+	ld	iy, _map
+	ld	bc, 0
+BB4_1:
+	ld	de, 8
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jp	z, BB4_8
+	ld	(ix - 12), bc
+	push	bc
+	pop	hl
+	ld	c, 4
+	call	__ishl
+	ld	bc, 96
+	add	hl, bc
+	ld	(ix - 15), hl
+	ld	(ix - 3), iy
+	ld	hl, 72
+BB4_3:
+	ld	(ix - 6), hl
+	ld	de, 200
+	or	a, a
+	sbc	hl, de
+	jr	z, BB4_7
+	ld	(ix - 9), iy
+	ld	hl, (ix - 3)
+	ld	a, (hl)
+	and	a, 7
+	ld	iy, 0
+	ld	iyl, a
+	ld	bc, -2
+	add	iy, bc
+	lea	hl, iy
+	ld	de, 3
+	or	a, a
+	sbc	hl, de
+	jr	nc, BB4_6
+	lea	hl, iy
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _switch.table.drawEntities
+	add	hl, de
+	ld	hl, (hl)
+	ld	hl, (hl)
+	ld	de, (ix - 6)
+	push	de
+	ld	de, (ix - 15)
+	push	de
+	push	hl
+	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+BB4_6:
+	ld	bc, 16
+	ld	hl, (ix - 6)
+	add	hl, bc
+	ld	iy, (ix - 3)
+	lea	iy, iy + 8
+	ld	(ix - 3), iy
+	ld	iy, (ix - 9)
+	jr	BB4_3
+BB4_7:
+	ld	bc, (ix - 12)
+	inc	bc
+	inc	iy
+	jp	BB4_1
+BB4_8:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_drawTotals
+_drawTotals:
+	ld	hl, -13
+	call	__frameset
+	xor	a, a
+	ld	hl, 96
+	ld	(ix - 9), hl
+	ld	bc, 0
+	ld	hl, 72
+	ld	(ix - 6), hl
+	ld	de, 8
+	ld	iyl, a
+	ld	(ix - 3), bc
+BB5_1:
+	ld	hl, (ix - 3)
+	or	a, a
+	sbc	hl, de
+	jr	z, BB5_5
+	ld	hl, (_colTargets)
+	ld	de, (ix - 3)
+	add	hl, de
+	ld	a, (hl)
+	ld	(ix - 13), a
+	ld	(ix - 12), iy
+	push	iy
+	call	_wallsInCol
+	pop	hl
+	ld	l, (ix - 13)
+	cp	a, l
+	ld	a, 9
+	jr	z, BB5_4
+	xor	a, a
+BB5_4:
+	add	a, l
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _digits_tiles_data
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, 52
+	push	de
+	ld	de, (ix - 9)
+	push	de
+	push	hl
+	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 3)
+	inc	hl
+	ld	(ix - 3), hl
+	ld	de, 16
+	ld	hl, (ix - 9)
+	add	hl, de
+	ld	(ix - 9), hl
+	ld	iy, (ix - 12)
+	inc	iyl
+	ld	bc, 0
+	ld	de, 8
+	jr	BB5_1
+BB5_5:
+	xor	a, a
+	ld	iyl, a
+BB5_6:
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jr	z, BB5_10
+	ld	hl, (_rowTargets)
+	ld	(ix - 3), bc
+	add	hl, bc
+	ld	a, (hl)
+	ld	(ix - 12), a
+	ld	(ix - 9), iy
+	push	iy
+	call	_wallsInRow
+	pop	hl
+	ld	l, (ix - 12)
+	cp	a, l
+	ld	a, 9
+	jr	z, BB5_9
+	xor	a, a
+BB5_9:
+	add	a, l
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	de
+	ld	hl, _digits_tiles_data
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, (ix - 6)
+	push	de
+	ld	de, 76
+	push	de
+	push	hl
+	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	bc, (ix - 3)
+	inc	bc
+	ld	de, 16
+	ld	hl, (ix - 6)
+	add	hl, de
+	ld	(ix - 6), hl
+	ld	iy, (ix - 9)
+	inc	iyl
+	ld	de, 8
+	jr	BB5_6
+BB5_10:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_drawErrors
+_drawErrors:
+	ld	hl, -9
+	call	__frameset
+	ld	de, 0
+	ld	bc, 8
+	push	de
+	pop	iy
+BB6_1:
+	lea	hl, iy
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB6_7
+	ld	(ix - 3), iy
+	push	iy
+	call	_wallsInCol
+	ld	c, a
+	pop	de
+	ld	hl, (_colTargets)
+	ld	de, (ix - 3)
+	add	hl, de
+	ld	a, (hl)
+	cp	a, c
+	ex	de, hl
+	jr	nc, BB6_6
+	ld	c, 4
+	call	__ishl
+	ld	de, 96
+	add	hl, de
+	ld	(ix - 6), hl
+	ld	iy, 72
+BB6_4:
+	lea	hl, iy
+	ld	de, 200
+	or	a, a
+	sbc	hl, de
+	ld	hl, (ix - 3)
+	jr	z, BB6_6
+	ld	hl, (_tileset_tiles_data+9)
+	push	iy
+	ld	de, (ix - 6)
+	push	de
+	push	hl
+	ld	(ix - 9), iy
+	call	_gfx_RLETSprite
+	ld	iy, (ix - 9)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, 16
+	add	iy, de
+	jr	BB6_4
+BB6_6:
+	inc	hl
+	push	hl
+	pop	iy
+	ld	de, 0
+	ld	bc, 8
+	jr	BB6_1
+BB6_7:
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB6_13
+	push	de
+	ld	(ix - 3), de
+	call	_wallsInRow
+	ld	c, a
+	pop	de
+	ld	de, (ix - 3)
+	ld	hl, (_rowTargets)
+	add	hl, de
+	ld	a, (hl)
+	cp	a, c
+	jr	nc, BB6_12
+	ex	de, hl
+	ld	c, 4
+	call	__ishl
+	ld	de, 72
+	add	hl, de
+	ld	(ix - 6), hl
+	ld	iy, 96
+BB6_10:
+	lea	hl, iy
+	ld	de, 224
+	or	a, a
+	sbc	hl, de
+	ld	de, (ix - 3)
+	jr	z, BB6_12
+	ld	hl, (_tileset_tiles_data+9)
+	ld	de, (ix - 6)
+	push	de
+	push	iy
+	push	hl
+	ld	(ix - 9), iy
+	call	_gfx_RLETSprite
+	ld	iy, (ix - 9)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, 16
+	add	iy, de
+	jr	BB6_10
+BB6_12:
+	inc	de
+	ld	bc, 8
+	jr	BB6_7
+BB6_13:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_doInput
+_doInput:
+	ld	hl, -8
+	call	__frameset
+	call	_os_GetCSC
+	ld	iyl, a
+	ld	bc, (_currentView)
+	ld	de, 4
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jp	nc, BB7_60
+	ld	iyh, 1
+	ld	de, 6
+	ld	hl, JTI7_0
+	add	hl, bc
+	add	hl, bc
+	add	hl, bc
+	ld	hl, (hl)
+	jp	(hl)
+BB7_2:
+	push	de
+	pop	bc
+	ld	a, iyl
+	add	a, -15
+	cp	a, 22
+	jp	nc, BB7_60
+	ld	de, 0
+	ld	e, a
+	ld	hl, JTI7_1
+	add	hl, de
+	add	hl, de
+	add	hl, de
+	ld	hl, (hl)
+	jp	(hl)
+BB7_4:
+	ld	hl, 2
+	jp	BB7_57
+BB7_5:
+	ld	a, iyl
+	dec	a
+	cp	a, 4
+	jp	c, BB7_15
+	ld	a, iyl
+	cp	a, 15
+	ld	hl, 0
+	jp	nz, BB7_22
+	ld	a, (_numLevelPacks)
+	or	a, a
+	jp	nz, BB7_21
+BB7_8:
+	ld	a, iyh
+	ld	(_toExit), a
+	jp	BB7_60
+BB7_9:
+	ld	a, iyl
+	cp	a, 15
+	jr	z, BB7_11
+	ld	a, iyl
+	cp	a, 54
+	jp	nz, BB7_60
+BB7_11:
+	or	a, a
+	sbc	hl, hl
+	jp	BB7_21
+BB7_12:
+	push	af
+	ld	a, iyl
+	ld	(ix - 1), a
+	pop	af
+	ld	iy, _map
+	ld	a, (_cursorRow)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	a, (_cursorCol)
+	ld	de, 0
+	ld	(ix - 5), a
+	ld	e, a
+	ld	c, 3
+	ld	(ix - 4), hl
+	call	__ishl
+	push	hl
+	pop	bc
+	add	iy, bc
+	add	iy, de
+	ld	l, (iy)
+	ld	a, l
+	and	a, 7
+	ld	c, a
+	add	a, -3
+	cp	a, 2
+	jr	nc, BB7_18
+	ld	l, (ix - 1)
+	ld	a, l
+	dec	a
+	cp	a, 4
+	jp	c, BB7_24
+	ld	a, l
+	cp	a, 15
+	jr	z, BB7_20
+	jp	BB7_60
+BB7_15:
+	ld	bc, 0
+	push	bc
+	pop	de
+	ld	e, a
+	ld	hl, JTI7_2
+	add	hl, de
+	add	hl, de
+	add	hl, de
+	ld	hl, (hl)
+	jp	(hl)
+BB7_16:
+	ld	a, (_levelIndex)
+	push	bc
+	pop	iy
+	ld	iyl, a
+	ld	de, 6
+	add	iy, de
+	ld	hl, (_packNumLevels)
+	ld	c, (hl)
+	lea	hl, iy
+	or	a, a
+	sbc	hl, bc
+	jp	nc, BB7_60
+	ld	a, iyl
+	jp	BB7_34
+BB7_18:
+	ld	(ix - 8), iy
+	ld	e, (ix - 1)
+	ld	a, e
+	dec	a
+	cp	a, 4
+	jr	c, BB7_25
+	ld	a, e
+	cp	a, 15
+	jp	nz, BB7_37
+BB7_20:
+	call	_saveLevel
+	ld	hl, 2
+BB7_21:
+	push	hl
+	call	_setView
+	jp	BB7_59
+BB7_22:
+	ld	a, iyl
+	cp	a, 54
+	jp	nz, BB7_60
+	ld	a, (_levelIndex)
+	ld	l, a
+	push	hl
+	call	_loadLevel
+	pop	hl
+	ld	hl, 3
+	ld	(_currentView), hl
+	xor	a, a
+	ld	(_cursorRow), a
+	jp	BB7_43
+BB7_24:
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	c, a
+	ld	hl, JTI7_4
+	add	hl, bc
+	add	hl, bc
+	add	hl, bc
+	ld	hl, (hl)
+	jp	(hl)
+BB7_25:
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	c, a
+	ld	hl, JTI7_3
+	add	hl, bc
+	add	hl, bc
+	add	hl, bc
+	ld	hl, (hl)
+	jp	(hl)
+BB7_26:
+	ld	hl, (ix - 4)
+	ld	a, l
+	cp	a, 7
+	jp	nc, BB7_60
+	ld	hl, (ix - 4)
+	inc	l
+	jr	BB7_46
+BB7_28:
+	ld	a, (_levelIndex)
+	ld	l, a
+	or	a, a
+	jp	z, BB7_60
+	dec	l
+	ld	a, l
+	jr	BB7_34
+BB7_30:
+	ld	a, (_levelIndex)
+	push	bc
+	pop	hl
+	ld	l, a
+	inc	hl
+	ld	iy, (_packNumLevels)
+	ld	c, (iy)
+	or	a, a
+	sbc	hl, bc
+	jp	nc, BB7_60
+	inc	a
+	jr	BB7_34
+BB7_32:
+	ld	a, (_levelIndex)
+	cp	a, 6
+	jp	c, BB7_60
+	add	a, -6
+BB7_34:
+	ld	(_levelIndex), a
+	jr	BB7_47
+BB7_35:
+	ld	a, (ix - 5)
+	cp	a, 7
+	jr	nc, BB7_60
+	inc	a
+	jr	BB7_43
+BB7_37:
+	ld	a, e
+	cp	a, 48
+	jr	nz, BB7_48
+	ld	a, c
+	cp	a, 2
+	ld	e, 0
+	jr	z, BB7_40
+	ld	e, 2
+BB7_40:
+	ld	a, l
+	and	a, -8
+	ld	l, a
+	ld	a, e
+	add	a, l
+	ld	hl, (ix - 8)
+	ld	(hl), a
+	jr	BB7_47
+BB7_41:
+	ld	l, (ix - 5)
+	ld	a, l
+	or	a, a
+	jr	z, BB7_60
+	dec	l
+	ld	a, l
+BB7_43:
+	ld	(_cursorCol), a
+	jr	BB7_47
+BB7_44:
+	ld	hl, (ix - 4)
+	ld	a, l
+	or	a, a
+	jr	z, BB7_60
+	ld	hl, (ix - 4)
+	dec	l
+BB7_46:
+	ld	a, l
+	ld	(_cursorRow), a
+BB7_47:
+	call	_drawView
+	jr	BB7_60
+BB7_48:
+	ld	a, e
+	cp	a, 54
+	jr	nz, BB7_60
+	ld	a, c
+	cp	a, 1
+	ld	iy, (ix - 8)
+	jr	nz, BB7_62
+	ld	e, 0
+	jr	BB7_63
+BB7_51:
+	ld	hl, 5
+	jr	BB7_57
+BB7_52:
+	ld	hl, 1
+	jr	BB7_57
+BB7_53:
+	ld	hl, 4
+	jr	BB7_57
+BB7_54:
+	ld	hl, 7
+	jr	BB7_57
+BB7_55:
+	or	a, a
+	sbc	hl, hl
+	jr	BB7_57
+BB7_56:
+	ld	hl, 3
+BB7_57:
+	push	hl
+BB7_58:
+	call	_loadLevelPack
+BB7_59:
+	pop	hl
+BB7_60:
+	ld	sp, ix
+	pop	ix
+	ret
+BB7_61:
+	push	bc
+	jr	BB7_58
+BB7_62:
+	ld	e, 1
+BB7_63:
+	ld	a, l
+	and	a, -8
+	add	a, e
+	ld	(iy), a
+	jr	BB7_47
+	section	.text,"ax",@progbits
+	section	.rodata,"a",@progbits
+	private	JTI7_0
+JTI7_0:
+	dl	BB7_2
+	dl	BB7_9
+	dl	BB7_5
+	dl	BB7_12
+	private	JTI7_1
+JTI7_1:
+	dl	BB7_8
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_4
+	dl	BB7_51
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_52
+	dl	BB7_53
+	dl	BB7_54
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_60
+	dl	BB7_55
+	dl	BB7_56
+	dl	BB7_61
+	private	JTI7_2
+JTI7_2:
+	dl	BB7_16
+	dl	BB7_28
+	dl	BB7_30
+	dl	BB7_32
+	private	JTI7_3
+JTI7_3:
+	dl	BB7_26
+	dl	BB7_41
+	dl	BB7_35
+	dl	BB7_44
+	private	JTI7_4
+JTI7_4:
+	dl	BB7_26
+	dl	BB7_41
+	dl	BB7_35
+	dl	BB7_44
+
+	section	.text,"ax",@progbits
+	public	_setView
+_setView:
+	call	__frameset0
+	ld	de, (ix + 6)
+	xor	a, a
+	ld	(_currentView), de
+	push	de
+	pop	hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jr	nz, BB8_3
+	call	_findLevelPacks
+	ld	a, (_numLevelPacks)
+	cp	a, 1
+	jr	nz, BB8_7
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_loadLevelPack
+	pop	hl
+	jr	BB8_8
+BB8_3:
+	ld	bc, 2
+	push	de
+	pop	hl
+	or	a, a
+	sbc	hl, bc
+	jr	nz, BB8_5
+	ld	a, (_levelIndex)
+	ld	l, a
+	push	hl
+	call	_loadLevel
+	pop	hl
+	jr	BB8_7
+BB8_5:
+	ld	bc, 3
+	ex	de, hl
+	or	a, a
+	sbc	hl, bc
+	jr	nz, BB8_7
+	ld	(_cursorRow), a
+	ld	(_cursorCol), a
+BB8_7:
+	call	_drawView
+BB8_8:
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_saveLevel
+_saveLevel:
+	ld	hl, -12
+	call	__frameset
+	ld	c, 1
+	ld	iy, _map
+	ld	hl, (_packStart)
+	ld	(ix - 3), hl
+	ld	hl, (_packToc)
+	ld	(ix - 6), hl
+	ld	a, (_levelIndex)
+	ld	de, 0
+	ld	e, a
+	push	de
+	pop	hl
+	call	__ishl
+	push	hl
+	pop	bc
+	ld	hl, (ix - 6)
+	add	hl, bc
+	ld	hl, (hl)
+	ld	e, l
+	ld	d, h
+	ld	hl, (ix - 3)
+	add	hl, de
+BB9_1:
+	ld	a, (hl)
+	inc	hl
+	or	a, a
+	jr	nz, BB9_1
+	ld	(ix - 3), hl
+	ld	de, 8
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+BB9_3:
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jr	z, BB9_11
+	ld	hl, (ix - 3)
+	ld	(ix - 6), bc
+	add	hl, bc
+	ld	(ix - 12), hl
+	ld	(hl), 0
+	ld	e, 0
+	ld	a, e
+	ld	bc, 0
+BB9_5:
+	push	bc
+	pop	hl
+	ld	de, 8
+	or	a, a
+	sbc	hl, de
+	jr	z, BB9_10
+	srl	a
+	ld	hl, (ix - 12)
+	ld	(hl), a
+	ld	(ix - 9), iy
+	add	iy, bc
+	ld	l, a
+	ld	a, (iy)
+	and	a, 7
+	cp	a, 1
+	jr	nz, BB9_8
+	ld	a, l
+	add	a, -128
+	ld	hl, (ix - 3)
+	ld	de, (ix - 6)
+	add	hl, de
+	ld	(hl), a
+	jr	BB9_9
+BB9_8:
+	ld	a, l
+BB9_9:
+	inc	bc
+	ld	iy, (ix - 9)
+	jr	BB9_5
+BB9_10:
+	ld	bc, (ix - 6)
+	inc	bc
+	lea	iy, iy + 8
+	ld	de, 8
+	jr	BB9_3
+BB9_11:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_loadLevel
+_loadLevel:
+	ld	hl, -9
+	call	__frameset
+	ld	c, 1
+	ld	iy, (_packStart)
+	ld	hl, (_packToc)
+	ld	(ix - 3), hl
+	or	a, a
+	sbc	hl, hl
+	ld	l, (ix + 6)
+	call	__ishl
+	push	hl
+	pop	de
+	ld	hl, (ix - 3)
+	add	hl, de
+	ld	hl, (hl)
+	ld	de, 0
+	ld	e, l
+	ld	d, h
+	add	iy, de
+	ld	(_levelTitle), iy
+BB10_1:
+	lea	hl, iy
+	inc	iy
+	ld	(ix - 6), hl
+	ld	a, (hl)
+	or	a, a
+	jr	nz, BB10_1
+	ld	(ix - 3), iy
+	ld	de, 8
+	ld	hl, _map
+	push	hl
+	pop	iy
+	ld	bc, 0
+BB10_3:
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jr	z, BB10_8
+	lea	hl, iy
+	ld	iy, (ix - 3)
+	ld	(ix - 9), bc
+	add	iy, bc
+	ld	a, (iy)
+	push	hl
+	pop	iy
+	ld	de, 0
+BB10_5:
+	push	de
+	pop	hl
+	ld	bc, 8
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB10_7
+	lea	hl, iy
+	add	hl, de
+	ld	c, a
+	and	a, 1
+	ld	(hl), a
+	ld	a, c
+	srl	a
+	inc	de
+	jr	BB10_5
+BB10_7:
+	ld	bc, (ix - 9)
+	inc	bc
+	lea	iy, iy + 8
+	ld	de, 8
+	jr	BB10_3
+BB10_8:
+	ld	iy, (ix - 6)
+	lea	hl, iy + 9
+	ld	(_colTargets), hl
+	lea	hl, iy + 17
+	ld	(_rowTargets), hl
+	ld	iy, (ix - 3)
+BB10_9:
+	ld	a, (iy + 24)
+	ld	de, 0
+	cp	a, -1
+	jr	z, BB10_11
+	push	de
+	pop	hl
+	ld	l, a
+	ld	e, (iy + 25)
+	ld	c, 3
+	call	__ishl
+	push	hl
+	pop	bc
+	ld	hl, _map
+	add	hl, bc
+	add	hl, de
+	ld	a, (iy + 26)
+	ld	b, 3
+	call	__bshl
+	add	a, 4
+	ld	(hl), a
+	lea	iy, iy + 3
+	jr	BB10_9
+BB10_11:
+	push	de
+	pop	bc
+	lea	hl, iy
+	add	iy, bc
+	ld	a, (iy + 25)
+	cp	a, -1
+	jr	z, BB10_13
+	ld	bc, 0
+	push	bc
+	pop	iy
+	push	hl
+	pop	bc
+	ld	(ix - 3), bc
+	lea	hl, iy
+	ld	l, a
+	ld	(ix - 6), de
+	push	bc
+	pop	iy
+	add	iy, de
+	ld	de, 0
+	ld	e, (iy + 26)
+	ld	c, 3
+	call	__ishl
+	push	hl
+	pop	bc
+	ld	hl, _map
+	add	hl, bc
+	add	hl, de
+	ld	(hl), 3
+	ld	de, 2
+	ld	hl, (ix - 6)
+	add	hl, de
+	ex	de, hl
+	ld	iy, (ix - 3)
+	jr	BB10_11
+BB10_13:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_loadLevelPack
+_loadLevelPack:
+	ld	hl, -6
+	call	__frameset
+	ld	c, (ix + 6)
+	ld	e, 0
+	ld	a, (_numLevelPacks)
+	ld	l, a
+	ld	a, c
+	cp	a, l
+	jp	nc, BB11_7
+	ld	hl, 0
+	ld	(ix - 3), hl
+BB11_2:
+	ld	a, c
+	cp	a, e
+	jr	c, BB11_4
+	ld	hl, _.str.24
+	push	hl
+	pea	ix - 3
+	ld	(ix - 6), e
+	call	_ti_Detect
+	ld	c, (ix + 6)
+	pop	de
+	pop	de
+	ld	e, (ix - 6)
+	inc	e
+	jr	BB11_2
+BB11_4:
+	ld	de, _.str.1.23
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	ld	(ix - 6), de
+	pop	hl
+	pop	hl
+	push	de
+	call	_ti_GetDataPtr
+	pop	de
+	ld	(_packStart), hl
+	ld	hl, (ix - 6)
+	push	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 3
+	push	hl
+	call	_ti_Seek
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 6)
+	push	hl
+	call	_ti_GetDataPtr
+	pop	de
+	ld	(_packTitle), hl
+BB11_5:
+	push	hl
+	pop	iy
+	ld	(_packNumLevels), iy
+	inc	hl
+	ld	a, (iy)
+	or	a, a
+	jr	nz, BB11_5
+	ld	(_packNumLevels), hl
+	lea	hl, iy + 2
+	ld	(_packToc), hl
+	ld	hl, (ix - 6)
+	push	hl
+	call	_ti_Close
+	pop	hl
+	xor	a, a
+	ld	(_levelIndex), a
+	ld	hl, 2
+	push	hl
+	call	_setView
+	pop	hl
+BB11_7:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_findLevelPacks
+_findLevelPacks:
+	ld	hl, -6
+	call	__frameset
+	xor	a, a
+	ld	hl, 0
+	ld	de, _.str.24
+	ld	(_numLevelPacks), a
+	ld	(ix - 3), hl
+BB12_1:
+	push	de
+	pea	ix - 3
+	call	_ti_Detect
+	pop	de
+	pop	de
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB12_3
+	ld	de, _.str.1.23
+	push	de
+	push	hl
+	call	_ti_Open
+	ld	e, a
+	ld	(ix - 6), de
+	pop	hl
+	pop	hl
+	push	de
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 3
+	push	hl
+	call	_ti_Seek
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 6)
+	push	hl
+	call	_ti_GetDataPtr
+	push	hl
+	pop	de
+	pop	hl
+	ld	a, (_numLevelPacks)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	bc, 3
+	call	__imulu
+	push	hl
+	pop	bc
+	ld	hl, _levelPackNames
+	add	hl, bc
+	ld	(hl), de
+	inc	a
+	ld	(_numLevelPacks), a
+	ld	hl, (ix - 6)
+	push	hl
+	call	_ti_Close
+	pop	hl
+	ld	de, _.str.24
+	jr	BB12_1
+BB12_3:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_listLevelPacks
+_listLevelPacks:
+	ld	hl, -12
+	call	__frameset
+	ld	hl, 1
+	ld	iy, 80
+	ld	bc, _levelPackNames
+BB13_1:
+	ld	(ix - 3), hl
+	dec	hl
+	ld	a, (_numLevelPacks)
+	ld	de, 0
+	ld	e, a
+	or	a, a
+	sbc	hl, de
+	jr	nc, BB13_3
+	ld	(ix - 6), bc
+	ld	hl, (ix - 6)
+	ld	hl, (hl)
+	ld	(ix - 12), hl
+	push	iy
+	ld	hl, 40
+	push	hl
+	ld	(ix - 9), iy
+	call	_gfx_SetTextXY
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	ld	hl, (ix - 3)
+	push	hl
+	call	_gfx_PrintUInt
+	pop	hl
+	pop	hl
+	ld	hl, _.str.2
+	push	hl
+	call	_gfx_PrintString
+	pop	hl
+	ld	hl, (ix - 12)
+	push	hl
+	call	_gfx_PrintString
+	pop	hl
+	ld	hl, (ix - 3)
+	ld	iy, (ix - 6)
+	lea	iy, iy + 3
+	lea	bc, iy
+	ld	de, 14
+	ld	iy, (ix - 9)
+	add	iy, de
+	inc	hl
+	jr	BB13_1
+BB13_3:
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_main
+_main:
+	call	_gfx_Begin
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 36
+	push	hl
+	ld	hl, _default_palette
+	push	hl
+	call	_gfx_SetPalette
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetDraw
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_FillScreen
+	pop	hl
+	ld	hl, -1048532
+	set	0, (hl)
+	ld	a, 1
+	ld	(-1048536), a
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_setView
+	pop	hl
+BB14_1:
+	ld	a, (-1048544)
+	and	a, 1
+	bit	0, a
+	jr	nz, BB14_3
+	call	_doInput
+	ld	a, (_toExit)
+	bit	0, a
+	jr	z, BB14_1
+BB14_3:
+	ld	a, 1
+	ld	(-1048536), a
+	call	_gfx_End
+	or	a, a
+	sbc	hl, hl
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_getCell
+_getCell:
+	call	__frameset0
+	ld	hl, (ix + 6)
+	ld	c, (ix + 9)
+	ld	b, (ix + 12)
+	ld	a, b
+	or	a, c
+	cp	a, 8
+	jr	nc, BB15_2
+	ld	iy, _map
+	ld	de, 0
+	push	de
+	pop	hl
+	ld	l, c
+	ld	e, b
+	ld	c, 3
+	call	__ishl
+	push	hl
+	pop	bc
+	ld	hl, (ix + 6)
+	add	iy, bc
+	add	iy, de
+	ld	a, (iy)
+	jr	BB15_3
+BB15_2:
+	ld	a, 1
+BB15_3:
+	ld	(hl), a
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_wallsInRow
+_wallsInRow:
+	ld	hl, -3
+	call	__frameset
+	ld	iy, _map
+	ld	de, 0
+	xor	a, a
+	sbc	hl, hl
+	ld	l, (ix + 6)
+	ld	c, 3
+	call	__ishl
+	push	hl
+	pop	bc
+	add	iy, bc
+	ld	(ix - 3), iy
+	ld	bc, 8
+BB16_1:
+	push	de
+	pop	hl
+	push	bc
+	pop	iy
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB16_5
+	ld	c, a
+	ld	hl, (ix - 3)
+	add	hl, de
+	ld	a, (hl)
+	and	a, 7
+	cp	a, 1
+	ld	l, 1
+	jr	z, BB16_4
+	ld	l, 0
+BB16_4:
+	ld	a, c
+	add	a, l
+	inc	de
+	lea	bc, iy
+	jr	BB16_1
+BB16_5:
+	pop	hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.text,"ax",@progbits
+	public	_wallsInCol
+_wallsInCol:
+	ld	hl, -3
+	call	__frameset
+	ld	hl, _map
+	ld	iy, 0
+	ld	e, iyh
+	ld	bc, 0
+	ld	c, (ix + 6)
+	add	hl, bc
+	ld	(ix - 3), hl
+	ld	bc, 64
+	ld	d, 1
+BB17_1:
+	lea	hl, iy
+	or	a, a
+	sbc	hl, bc
+	jr	z, BB17_5
+	lea	bc, iy
+	ld	hl, (ix - 3)
+	add	hl, bc
+	ld	a, (hl)
+	and	a, 7
+	cp	a, 1
+	ld	l, d
+	jr	z, BB17_4
+	ld	l, 0
+BB17_4:
+	ld	a, e
+	add	a, l
+	ld	e, a
+	ld	bc, 8
+	add	iy, bc
+	ld	bc, 64
+	jr	BB17_1
+BB17_5:
+	ld	a, e
+	pop	hl
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.rodata,"a",@progbits
+	public	_tileIds
+_tileIds:
+	db	"	", 0, "", 13, "", 10, ""
+
+	section	.rodata,"a",@progbits
+	private	_.str
+_.str:
+	db	"Select pack to load:", 0
+
+	section	.rodata,"a",@progbits
+	private	_.str.1
+_.str.1:
+	db	"No level packs found!", 0
+
+	section	.rodata,"a",@progbits
+	private	_switch.table.drawEntities
+_switch.table.drawEntities:
+	dl	_tileset_tiles_data+3
+	dl	_tileset_tiles_data+6
+	dl	_tileset_tiles_data+12
+
+	section	.bss,"aw",@nobits
+	public	_currentView
+_currentView:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_cursorRow
+_cursorRow:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_cursorCol
+_cursorCol:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_levelIndex
+_levelIndex:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_packNumLevels
+_packNumLevels:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_numLevelPacks
+_numLevelPacks:
+	rb	1
+
+	section	.rodata,"a",@progbits
+	private	_.str.24
+_.str.24:
+	db	"ìù", 0
+
+	section	.rodata,"a",@progbits
+	private	_.str.1.23
+_.str.1.23:
+	db	"r", 0
+
+	section	.bss,"aw",@nobits
+	public	_levelPackNames
+_levelPackNames:
+	rb	24
+
+	section	.rodata,"a",@progbits
+	private	_.str.2
+_.str.2:
+	db	". ", 0
+
+	section	.bss,"aw",@nobits
+	public	_packStart
+_packStart:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_packTitle
+_packTitle:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_packToc
+_packToc:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_levelTitle
+_levelTitle:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_colTargets
+_colTargets:
+	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_rowTargets
+_rowTargets:
+	rb	3
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_0_data
+_digits_tile_0_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_1_data
+_digits_tile_1_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_2_data
+_digits_tile_2_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_3_data
+_digits_tile_3_data:
+	db	"		"
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_4_data
+_digits_tile_4_data:
+	db	"				"
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_5_data
+_digits_tile_5_data:
+	db	"			"
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_6_data
+_digits_tile_6_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_7_data
+_digits_tile_7_data:
+	db	"	"
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_8_data
+_digits_tile_8_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_9_data
+_digits_tile_9_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_10_data
+_digits_tile_10_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_11_data
+_digits_tile_11_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_12_data
+_digits_tile_12_data:
+	db	"		"
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_13_data
+_digits_tile_13_data:
+	db	"				"
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_14_data
+_digits_tile_14_data:
+	db	"			"
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_15_data
+_digits_tile_15_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_16_data
+_digits_tile_16_data:
+	db	"	"
+
+	section	.data,"aw",@progbits
+	public	_digits_tile_17_data
+_digits_tile_17_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_digits_tiles_data
+_digits_tiles_data:
+	dl	_digits_tile_0_data
+	dl	_digits_tile_1_data
+	dl	_digits_tile_2_data
+	dl	_digits_tile_3_data
+	dl	_digits_tile_4_data
+	dl	_digits_tile_5_data
+	dl	_digits_tile_6_data
+	dl	_digits_tile_7_data
+	dl	_digits_tile_8_data
+	dl	_digits_tile_9_data
+	dl	_digits_tile_10_data
+	dl	_digits_tile_11_data
+	dl	_digits_tile_12_data
+	dl	_digits_tile_13_data
+	dl	_digits_tile_14_data
+	dl	_digits_tile_15_data
+	dl	_digits_tile_16_data
+	dl	_digits_tile_17_data
+
+	section	.data,"aw",@progbits
+	public	_level_data
+_level_data:
+	db	"ðð																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																"
+
+	section	.data,"aw",@progbits
+	public	_levels_data
+_levels_data:
+	db	"ðð"
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_0_data
+_tileset_tile_0_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_1_data
+_tileset_tile_1_data:
+	db	""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_2_data
+_tileset_tile_2_data:
+	db	"	", 10, "																																																													"
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_3_data
+_tileset_tile_3_data:
+	db	"", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_4_data
+_tileset_tile_4_data:
+	db	"", 10, 10, "", 10, 10, "", 10, 10, "", 10, "", 10, 10, "", 10, "", 10, "", 13, "", 10, "", 13, 13, 13, "", 10, "", 13, "", 10, 13, "", 13, 13, 13, 13, "	", 13, "", 13, "", 13, "", 13, 13, "", 10, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_5_data
+_tileset_tile_5_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_6_data
+_tileset_tile_6_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_7_data
+_tileset_tile_7_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_8_data
+_tileset_tile_8_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_9_data
+_tileset_tile_9_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_10_data
+_tileset_tile_10_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_11_data
+_tileset_tile_11_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_12_data
+_tileset_tile_12_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_13_data
+_tileset_tile_13_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_14_data
+_tileset_tile_14_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_15_data
+_tileset_tile_15_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_16_data
+_tileset_tile_16_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_17_data
+_tileset_tile_17_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_18_data
+_tileset_tile_18_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tile_19_data
+_tileset_tile_19_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_tileset_tiles_data
+_tileset_tiles_data:
+	dl	_tileset_tile_0_data
+	dl	_tileset_tile_1_data
+	dl	_tileset_tile_2_data
+	dl	_tileset_tile_3_data
+	dl	_tileset_tile_4_data
+	dl	_tileset_tile_5_data
+	dl	_tileset_tile_6_data
+	dl	_tileset_tile_7_data
+	dl	_tileset_tile_8_data
+	dl	_tileset_tile_9_data
+	dl	_tileset_tile_10_data
+	dl	_tileset_tile_11_data
+	dl	_tileset_tile_12_data
+	dl	_tileset_tile_13_data
+	dl	_tileset_tile_14_data
+	dl	_tileset_tile_15_data
+	dl	_tileset_tile_16_data
+	dl	_tileset_tile_17_data
+	dl	_tileset_tile_18_data
+	dl	_tileset_tile_19_data
+
+	section	.data,"aw",@progbits
+	public	_title_data
+_title_data:
+	db	"­USTRSQSQ", 0, "	H=	G	=", 10, "F", 10, "", 10, "=FA								", 10, "", 0, "	!%( %!	'		", 10, """)	", 10, "	U+„	„		„		„	„	„…", 10, "	†	", 10, "‡"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_0_data
+_walls_tile_0_data:
+	db	"", 0, "", 0, "", 10, 0, "", 10, 0, "	", 0, "	", 0, "	", 0, "	", 0, "	"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_1_data
+_walls_tile_1_data:
+	db	"																"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_2_data
+_walls_tile_2_data:
+	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "", 0, "", 0, "	", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_3_data
+_walls_tile_3_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_4_data
+_walls_tile_4_data:
+	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "", 0, "", 0, "						", 0, "							", 0, "								", 0, "								", 0, "																			"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_5_data
+_walls_tile_5_data:
+	db	"					", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_6_data
+_walls_tile_6_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_7_data
+_walls_tile_7_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "					", 0, "							", 0, "								", 0, "								", 0, "									", 0, "				", 0, "			", 0, "	", 0, "	", 0, "	"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_8_data
+_walls_tile_8_data:
+	db	"																											", 10, "						", 10, "										"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_9_data
+_walls_tile_9_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "																", 0, "																", 0, "																", 0, "																", 0, "																"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_10_data
+_walls_tile_10_data:
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "					", 0, "							", 0, "								", 0, "								", 0, "																			"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_11_data
+_walls_tile_11_data:
+	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_12_data
+_walls_tile_12_data:
+	db	18 dup 16
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_13_data
+_walls_tile_13_data:
+	db	"", 10, "", 10, "					"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_14_data
+_walls_tile_14_data:
+	db	"																	", 0, "								", 0, "								", 0, "									", 0, "				", 0, "			", 0, "	", 0, "	", 0, "	"
+
+	section	.data,"aw",@progbits
+	public	_walls_tile_15_data
+_walls_tile_15_data:
+	db	"", 0, "	", 0, "	", 0, "	", 0, "		", 0, "		", 0, "				", 0, "								", 0, "								", 0, "						", 10, 0, "						", 10, 0, "				"
+
+	section	.data,"aw",@progbits
+	public	_walls_tiles_data
+_walls_tiles_data:
+	dl	_walls_tile_0_data
+	dl	_walls_tile_1_data
+	dl	_walls_tile_2_data
+	dl	_walls_tile_3_data
+	dl	_walls_tile_4_data
+	dl	_walls_tile_5_data
+	dl	_walls_tile_6_data
+	dl	_walls_tile_7_data
+	dl	_walls_tile_8_data
+	dl	_walls_tile_9_data
+	dl	_walls_tile_10_data
+	dl	_walls_tile_11_data
+	dl	_walls_tile_12_data
+	dl	_walls_tile_13_data
+	dl	_walls_tile_14_data
+	dl	_walls_tile_15_data
+
+	section	.data,"aw",@progbits
+	public	_default_palette
+_default_palette:
+	db	"|", 0, 0, "ÿÿèlêò", 0, 0, "ÿƒç0f¸JÅhJ‡ÐNWÖZfµýšþrÿ"
+
+	section	.bss,"aw",@nobits
+	public	_toExit
+_toExit:
+	rb	1
+
+	section	.bss,"aw",@nobits
+	public	_map
+_map:
+	rb	64
+
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	ident	"clang version 15.0.0 (https://github.com/CE-Programming/llvm-project 23b78267b5d376b232475d0805a937e54b61e0d0)"
+	extern	__Unwind_SjLj_Register
+	extern	_ti_Detect
+	extern	_gfx_SetTextFGColor
+	extern	_gfx_Begin
+	extern	_gfx_SetPalette
+	extern	_ti_Close
+	extern	_blitBuffer
+	extern	_gfx_PrintString
+	extern	__ishl
+	extern	_gfx_FillRectangle
+	extern	_ti_Open
+	extern	_gfx_PrintUInt
+	extern	_gfx_Sprite
+	extern	_os_GetCSC
+	extern	__bdivu
+	extern	_gfx_RLETSprite
+	extern	__frameset
+	extern	_ti_Seek
+	extern	_gfx_SetDraw
+	extern	_gfx_FillScreen
+	extern	__Unwind_SjLj_Unregister
+	extern	__imulu
+	extern	_gfx_SetColor
+	extern	_gfx_Rectangle
+	extern	__bshl
+	extern	_ti_GetDataPtr
+	extern	_gfx_PrintStringXY
+	extern	_gfx_End
+	extern	_gfx_SetTextXY
+	extern	__frameset0

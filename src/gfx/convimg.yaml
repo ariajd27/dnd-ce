@@ -1,0 +1,36 @@
+palettes:
+  - name: default_palette
+    fixed-entries:
+      - color: {index: 0, hex: "#ff00ff"} # magenta
+      - color: {index: 1, hex: "#000000"} # black
+      - color: {index: 2, hex: "#ffffff"} # white
+      - color: {index: 3, hex: "#dd3745"} # red
+      - color: {index: 4, hex: "#e3c054"} # yellow
+    images: automatic
+
+converts:
+  - name: rlet
+    style: rlet
+    palette: default_palette
+    images:
+      - img/title.png
+    tilesets:
+      tile-width: 16
+      tile-height: 16
+      images:
+        - tile/*
+  - name: solid
+    style: palette
+    palette: default_palette
+    images:
+      - img/level.png
+      - img/levels.png
+
+outputs:
+  - type: c
+    include-file: gfx.h
+    palettes: 
+      - default_palette
+    converts:
+      - rlet
+      - solid
