@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-#define sizeof_default_palette 36
-extern unsigned char default_palette[36];
+#define sizeof_default_palette 40
+extern unsigned char default_palette[40];
 
 #ifdef __cplusplus
 }

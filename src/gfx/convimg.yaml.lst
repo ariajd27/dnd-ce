@@ -8,8 +8,4 @@ tileset.h
 tileset.c
 walls.h
 walls.c
-level.h
-level.c
-levels.h
-levels.c
 gfx.h

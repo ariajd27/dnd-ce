@@ -5,7 +5,7 @@
 NAME = DDGAME
 ICON = icon.png
 DESCRIPTION = "Dungeons & Diagrams"
-COMPRESSED = YES
+COMPRESSED = NO
 ARCHIVED = NO
 
 CFLAGS = -Wall -Wextra -Oz -Wno-pointer-sign

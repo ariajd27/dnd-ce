@@ -10,10 +10,19 @@
 #define TILE_FLAG tileset_tiles[1]
 #define TILE_CHEST tileset_tiles[2]
 #define TILE_ERROR tileset_tiles[3]
-#define TILE_MONSTER tileset_tiles[4]
+#define TILE_MONSTER(variant) tileset_tiles[4 * (variant + 1)]
+#define ANIMATED_MONSTER(variant, frame) tileset_tiles[4 * (variant + 1) + frame]
 
 const uint8_t tileIds[] = {12, 15, 8, 9, 0, 11, 14, 7, 13, 4, 1, 10, 3, 2, 5, 6};
 #define getTileIndexFromNeighbors(tileNeighbors) tileIds[tileNeighbors]
+
+void drawBackground()
+{
+    gfx_SetColor(COLOR_LIGHT_GREY);
+    gfx_FillRectangle(BG_X, 0, BG_WIDTH, BANNER_HEIGHT);
+    gfx_SetColor(COLOR_DARK_GREY);
+    gfx_FillRectangle(BG_X, BANNER_HEIGHT, BG_WIDTH, GFX_LCD_HEIGHT - BANNER_HEIGHT);
+}
 
 void drawView() {
     gfx_FillScreen(COLOR_BLACK);
@@ -34,8 +43,7 @@ void drawView() {
             break;
 
         case VIEW_LEVELS:
-            // draw the background and banner
-            gfx_Sprite(levels, BG_X, BG_Y);
+            drawBackground();
             gfx_RLETSprite(title, LEVELS_TITLE_X, LEVELS_TITLE_Y);
             gfx_SetTextFGColor(COLOR_BLACK);
             gfx_PrintStringXY(packTitle, LEVEL_PACK_NAME_X, LEVEL_PACK_NAME_Y);
@@ -69,7 +77,7 @@ void drawView() {
             break;
 
         case VIEW_GAME:
-            gfx_Sprite(level, BG_X, BG_Y);
+            drawBackground();
             gfx_SetTextFGColor(COLOR_WHITE);
             printCentered(levelTitle, LEVEL_TITLE_Y);
             drawTiles();
@@ -92,21 +100,28 @@ void drawTiles() {
     gfx_RLETSprite(TILE_CURSOR, MAP_X + cursorCol * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + cursorRow * TILE_HEIGHT + TILE_HEIGHT / 2);
 }
 
-void drawEntities() {
-    for (uint8_t col = 0; col < MAP_WIDTH; col++) {
-        for (uint8_t row = 0; row < MAP_HEIGHT; row++) {
+void drawEntities()
+{
+    for (uint8_t col = 0; col < MAP_WIDTH; col++)
+    {
+        for (uint8_t row = 0; row < MAP_HEIGHT; row++)
+        {
+            gfx_rletsprite_t *tileSprite;
+
             switch (map[row][col].contents) {
                 case ENTITY_FLAG:
-                    gfx_RLETSprite(TILE_FLAG, MAP_X + col * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + row * TILE_HEIGHT + TILE_HEIGHT / 2);
+                    tileSprite = TILE_FLAG;
                     break;
                 case ENTITY_CHEST:
-                    gfx_RLETSprite(TILE_CHEST, MAP_X + col * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + row * TILE_HEIGHT + TILE_HEIGHT / 2);
+                    tileSprite = TILE_CHEST;
                     break;
                 case ENTITY_MONSTER:
-                    gfx_RLETSprite(TILE_MONSTER, MAP_X + col * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + row * TILE_HEIGHT + TILE_HEIGHT / 2);
+                    tileSprite = TILE_MONSTER(map[row][col].variant);
                     break;
                 default: break;
             }
+
+            gfx_RLETSprite(tileSprite, MAP_X + col * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + row * TILE_HEIGHT + TILE_HEIGHT / 2);
         }
     }
 }

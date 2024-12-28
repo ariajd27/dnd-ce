@@ -16,35 +16,35 @@ extern unsigned char tileset_tile_3_data[114];
 #define tileset_tile_4 ((gfx_rletsprite_t*)tileset_tile_4_data)
 extern unsigned char tileset_tile_4_data[167];
 #define tileset_tile_5 ((gfx_rletsprite_t*)tileset_tile_5_data)
-extern unsigned char tileset_tile_5_data[170];
+extern unsigned char tileset_tile_5_data[166];
 #define tileset_tile_6 ((gfx_rletsprite_t*)tileset_tile_6_data)
-extern unsigned char tileset_tile_6_data[170];
+extern unsigned char tileset_tile_6_data[162];
 #define tileset_tile_7 ((gfx_rletsprite_t*)tileset_tile_7_data)
-extern unsigned char tileset_tile_7_data[170];
+extern unsigned char tileset_tile_7_data[164];
 #define tileset_tile_8 ((gfx_rletsprite_t*)tileset_tile_8_data)
-extern unsigned char tileset_tile_8_data[170];
+extern unsigned char tileset_tile_8_data[151];
 #define tileset_tile_9 ((gfx_rletsprite_t*)tileset_tile_9_data)
-extern unsigned char tileset_tile_9_data[170];
+extern unsigned char tileset_tile_9_data[151];
 #define tileset_tile_10 ((gfx_rletsprite_t*)tileset_tile_10_data)
-extern unsigned char tileset_tile_10_data[170];
+extern unsigned char tileset_tile_10_data[150];
 #define tileset_tile_11 ((gfx_rletsprite_t*)tileset_tile_11_data)
-extern unsigned char tileset_tile_11_data[170];
+extern unsigned char tileset_tile_11_data[150];
 #define tileset_tile_12 ((gfx_rletsprite_t*)tileset_tile_12_data)
-extern unsigned char tileset_tile_12_data[170];
+extern unsigned char tileset_tile_12_data[150];
 #define tileset_tile_13 ((gfx_rletsprite_t*)tileset_tile_13_data)
-extern unsigned char tileset_tile_13_data[170];
+extern unsigned char tileset_tile_13_data[150];
 #define tileset_tile_14 ((gfx_rletsprite_t*)tileset_tile_14_data)
-extern unsigned char tileset_tile_14_data[170];
+extern unsigned char tileset_tile_14_data[157];
 #define tileset_tile_15 ((gfx_rletsprite_t*)tileset_tile_15_data)
-extern unsigned char tileset_tile_15_data[170];
+extern unsigned char tileset_tile_15_data[153];
 #define tileset_tile_16 ((gfx_rletsprite_t*)tileset_tile_16_data)
-extern unsigned char tileset_tile_16_data[170];
+extern unsigned char tileset_tile_16_data[118];
 #define tileset_tile_17 ((gfx_rletsprite_t*)tileset_tile_17_data)
-extern unsigned char tileset_tile_17_data[170];
+extern unsigned char tileset_tile_17_data[128];
 #define tileset_tile_18 ((gfx_rletsprite_t*)tileset_tile_18_data)
-extern unsigned char tileset_tile_18_data[170];
+extern unsigned char tileset_tile_18_data[139];
 #define tileset_tile_19 ((gfx_rletsprite_t*)tileset_tile_19_data)
-extern unsigned char tileset_tile_19_data[170];
+extern unsigned char tileset_tile_19_data[129];
 #define tileset_num_tiles 20
 #define tileset_tiles ((gfx_rletsprite_t**)tileset_tiles_data)
 extern unsigned char *tileset_tiles_data[20];

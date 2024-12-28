@@ -17,9 +17,9 @@ int main(void) {
 
     setView(VIEW_TITLE);
 
-    while (!kb_On) {
+    while (!toExit) {
         doInput();
-        if (toExit) break;
+        if (kb_On) break;
     }
 
     kb_ClearOnLatch();

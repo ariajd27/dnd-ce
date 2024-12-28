@@ -98,7 +98,6 @@ void doInput() {
                 else toExit = true;
                 return;
             }
-
             if (key == sk_2nd) {
                 loadLevel(levelIndex);
                 setView(VIEW_GAME);

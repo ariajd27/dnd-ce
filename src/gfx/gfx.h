@@ -11,9 +11,6 @@ extern "C" {
 #include "digits.h"
 #include "tileset.h"
 #include "walls.h"
-#define solid_palette_offset 0
-#include "level.h"
-#include "levels.h"
 
 #ifdef __cplusplus
 }

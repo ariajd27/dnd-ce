@@ -6,6 +6,8 @@ palettes:
       - color: {index: 2, hex: "#ffffff"} # white
       - color: {index: 3, hex: "#dd3745"} # red
       - color: {index: 4, hex: "#e3c054"} # yellow
+      - color: {index: 5, hex: "#656565"} # light grey
+      - color: {index: 6, hex: "#444444"} # dark grey
     images: automatic
 
 converts:
@@ -19,12 +21,6 @@ converts:
       tile-height: 16
       images:
         - tile/*
-  - name: solid
-    style: palette
-    palette: default_palette
-    images:
-      - img/level.png
-      - img/levels.png
 
 outputs:
   - type: c
@@ -33,4 +29,3 @@ outputs:
       - default_palette
     converts:
       - rlet
-      - solid
