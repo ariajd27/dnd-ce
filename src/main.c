@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <graphx.h>
 #include <keypadc.h>
-#include <sys/rtc.h>
 #include "gfx/gfx.h"
 #include "drawing.h"
 #include "game.h"
@@ -17,9 +16,12 @@ int main(void) {
 
     setView(VIEW_TITLE);
 
-    while (!toExit) {
-        doInput();
+    while (!toExit)
+    {
         if (kb_On) break;
+
+        doInput();
+        drawView();
     }
 
     kb_ClearOnLatch();

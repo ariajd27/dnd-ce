@@ -5,7 +5,7 @@ levels:
   - name: Tenaxxus's Gullet
     cols: [4, 4, 2, 6, 2, 3, 4, 7]
     rows: [7, 3, 4, 1, 7, 1, 6, 3]
-    monsters: [[0, 5, 3], [5, 0, 3], [7, 2, 1], [7, 7, 3]]
+    monsters: [[0, 5, 3], [5, 0, 3], [7, 2, 0], [7, 7, 3]]
     chests: [[2, 1]]
 
   - name: The Twin Cities of the Dead

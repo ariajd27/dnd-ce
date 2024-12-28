@@ -22,7 +22,7 @@
 #define LEVELS_TITLE_X 73
 #define LEVELS_TITLE_Y 10
 #define LEVEL_PACK_NAME_X 78
-#define LEVEL_PACK_NAME_Y 48
+#define LEVEL_PACK_NAME_Y 49
 #define LEVEL_SELECT_NAME_X 64
 #define LEVEL_SELECT_NAME_Y 74
 #define LEVELS_PER_ROW 6
@@ -35,7 +35,7 @@
 #define LEVELS_CURSOR_VOFFSET 2
 #define LEVELS_SCALE 4
 
-#define LEVEL_TITLE_Y 16
+#define LEVEL_TITLE_Y LEVEL_PACK_NAME_Y
 #define MAP_X 88
 #define MAP_Y 86
 #define TILE_WIDTH 16
@@ -50,11 +50,12 @@ typedef enum {
     SIDE_FRONT
 } side_t;
 
+extern uint8_t levelWinAnimFrame;
+
 void drawTiles();
 void drawEntities();
 void drawWalls(side_t side);
-void drawErrors();
-void drawTotals();
+void drawErrorsAndTotals();
 
 void printCentered(char *str, uint8_t y);
 

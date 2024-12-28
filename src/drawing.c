@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <graphx.h>
+#include <time.h>
 #include "map.h"
 #include "drawing.h"
 #include "game.h"
@@ -10,11 +11,15 @@
 #define TILE_FLAG tileset_tiles[1]
 #define TILE_CHEST tileset_tiles[2]
 #define TILE_ERROR tileset_tiles[3]
-#define TILE_MONSTER(variant) tileset_tiles[4 * (variant + 1)]
-#define ANIMATED_MONSTER(variant, frame) tileset_tiles[4 * (variant + 1) + frame]
+
+#define NUM_WIN_ANIM_FRAMES 4
+#define WIN_ANIM_FRAME_TIME 10000
 
 const uint8_t tileIds[] = {12, 15, 8, 9, 0, 11, 14, 7, 13, 4, 1, 10, 3, 2, 5, 6};
 #define getTileIndexFromNeighbors(tileNeighbors) tileIds[tileNeighbors]
+
+uint8_t levelWinAnimFrame = 0;
+clock_t lastWinAnimFrame;
 
 void drawBackground()
 {
@@ -46,7 +51,7 @@ void drawView() {
             drawBackground();
             gfx_RLETSprite(title, LEVELS_TITLE_X, LEVELS_TITLE_Y);
             gfx_SetTextFGColor(COLOR_BLACK);
-            gfx_PrintStringXY(packTitle, LEVEL_PACK_NAME_X, LEVEL_PACK_NAME_Y);
+            printCentered(packTitle, LEVEL_PACK_NAME_Y);
 
             for (uint8_t i = 0; i < *packNumLevels; i++) {
                 const uint24_t levelX = LEVELS_X + LEVELS_DX * (i % LEVELS_PER_ROW);
@@ -69,7 +74,7 @@ void drawView() {
 
                 // only get here if this is the selected level
                 // draw the selection cursor and display the name of the level
-                gfx_PrintStringXY(levelTitle, LEVEL_SELECT_NAME_X, LEVEL_SELECT_NAME_Y);
+                printCentered(levelTitle, LEVEL_SELECT_NAME_Y);
                 gfx_SetColor(COLOR_RED);
                 gfx_Rectangle(levelX - LEVELS_CURSOR_HOFFSET, levelY - LEVELS_CURSOR_VOFFSET, LEVELS_DX, LEVELS_DY);
             }
@@ -78,7 +83,8 @@ void drawView() {
 
         case VIEW_GAME:
             drawBackground();
-            gfx_SetTextFGColor(COLOR_WHITE);
+            gfx_RLETSprite(title, LEVELS_TITLE_X, LEVELS_TITLE_Y);
+            gfx_SetTextFGColor(COLOR_BLACK);
             printCentered(levelTitle, LEVEL_TITLE_Y);
             drawTiles();
 
@@ -95,8 +101,7 @@ void drawTiles() {
     drawWalls(SIDE_BACK);
     drawEntities();
     drawWalls(SIDE_FRONT);
-    drawTotals();
-    drawErrors();
+    drawErrorsAndTotals();
     gfx_RLETSprite(TILE_CURSOR, MAP_X + cursorCol * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + cursorRow * TILE_HEIGHT + TILE_HEIGHT / 2);
 }
 
@@ -116,9 +121,9 @@ void drawEntities()
                     tileSprite = TILE_CHEST;
                     break;
                 case ENTITY_MONSTER:
-                    tileSprite = TILE_MONSTER(map[row][col].variant);
+                    tileSprite = tileset_tiles[4 * (map[row][col].variant + 1) + levelWinAnimFrame];
                     break;
-                default: break;
+                default: continue;
             }
 
             gfx_RLETSprite(tileSprite, MAP_X + col * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + row * TILE_HEIGHT + TILE_HEIGHT / 2);
@@ -147,9 +152,14 @@ void drawWalls(side_t side) {
     }
 }
 
-void drawErrors() {
+void drawErrorsAndTotals()
+{
+    bool noExcess = true;
+
+    // errors
     for (uint8_t col = 0; col < MAP_WIDTH; col++) {
         if (wallsInCol(col) > colTargets[col]) {
+            noExcess = false;
             for (uint8_t row = 0; row < MAP_HEIGHT; row++) {
                 gfx_RLETSprite(TILE_ERROR, MAP_X + col * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + row * TILE_HEIGHT + TILE_HEIGHT / 2);
             }
@@ -157,26 +167,50 @@ void drawErrors() {
     }
     for (uint8_t row = 0; row < MAP_HEIGHT; row++) {
         if (wallsInRow(row) > rowTargets[row]) {
+            noExcess = false;
             for (uint8_t col = 0; col < MAP_WIDTH; col++) {
                 gfx_RLETSprite(TILE_ERROR, MAP_X + col * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + row * TILE_HEIGHT + TILE_HEIGHT / 2);
             }
         }
     }
-}
 
-void drawTotals() {
+    bool noMissing = true;
+
+    // totals
     for (uint8_t col = 0; col < MAP_WIDTH; col++) {
-        const uint8_t spriteIndex = colTargets[col] + (wallsInCol(col) == colTargets[col] ? 9 : 0);
+        bool thisSatisfied = wallsInCol(col) == colTargets[col];
+        noMissing &= thisSatisfied;
+        const uint8_t spriteIndex = colTargets[col] + (thisSatisfied ? 9 : 0);
         gfx_RLETSprite(digits_tiles[spriteIndex], MAP_X + col * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y - DIGIT_VOFFSET);
     }
     for (uint8_t row = 0; row < MAP_HEIGHT; row++) {
-        const uint8_t spriteIndex = rowTargets[row] + (wallsInRow(row) == rowTargets[row] ? 9 : 0);
+        bool thisSatisfied = wallsInRow(row) == rowTargets[row];
+        noMissing &= thisSatisfied;
+        const uint8_t spriteIndex = rowTargets[row] + (thisSatisfied ? 9 : 0);
         gfx_RLETSprite(digits_tiles[spriteIndex], MAP_X - DIGIT_HOFFSET, MAP_Y + row * TILE_HEIGHT + TILE_HEIGHT / 2);
+    }
+
+    if (noMissing && noExcess)
+    {
+        if (levelWinAnimFrame == 0) {
+            levelWinAnimFrame++;
+            lastWinAnimFrame = clock();
+        }
+        else if (clock() - lastWinAnimFrame > WIN_ANIM_FRAME_TIME)
+        {
+            lastWinAnimFrame = clock();
+            if (levelWinAnimFrame < NUM_WIN_ANIM_FRAMES - 1) {
+                levelWinAnimFrame++;
+            }
+            else {
+                levelWinAnimFrame--;
+            }
+        }
     }
 }
 
 void printCentered(char *str, uint8_t y) {
     uint8_t length;
     for (length = 0; str[length] != 0x00; length++);
-    gfx_PrintStringXY(str, GFX_LCD_WIDTH / 2 - 4 * length, y);
+    gfx_PrintStringXY(str, (GFX_LCD_WIDTH / 2) - (4 * length) + 4, y);
 }

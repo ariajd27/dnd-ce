@@ -28,8 +28,6 @@ uint8_t levelIndex;
 char *levelTitle;
 
 void doInput() {
-    bool changed = false;
-
     uint8_t key = os_GetCSC();
 
     switch(currentView) {
@@ -43,29 +41,23 @@ void doInput() {
             if (map[cursorRow][cursorCol].contents != ENTITY_MONSTER && map[cursorRow][cursorCol].contents != ENTITY_CHEST) {
                 if (key == sk_2nd) {
                     map[cursorRow][cursorCol].contents = map[cursorRow][cursorCol].contents == ENTITY_WALL ? ENTITY_NONE : ENTITY_WALL;
-                    changed = true;
                 }
                 else if (key == sk_Alpha) {
                     map[cursorRow][cursorCol].contents = map[cursorRow][cursorCol].contents == ENTITY_FLAG ? ENTITY_NONE : ENTITY_FLAG;
-                    changed = true;
                 }
             }
 
             if (key == sk_Left && cursorCol > 0) {
                 cursorCol--;
-                changed = true;
             }
             if (key == sk_Right && cursorCol < MAP_WIDTH - 1) {
                 cursorCol++;
-                changed = true;
             }
             if (key == sk_Up && cursorRow > 0) {
                 cursorRow--;
-                changed = true;
             }
             if (key == sk_Down && cursorRow < MAP_HEIGHT - 1) {
                 cursorRow++;
-                changed = true;
             }
 
             if (key == sk_Clear) {
@@ -78,23 +70,19 @@ void doInput() {
         case VIEW_LEVELS:
             if (key == sk_Up && levelIndex >= LEVELS_PER_ROW) {
                 levelIndex -= LEVELS_PER_ROW;
-                changed = true;
             }
             if (key == sk_Down && levelIndex + LEVELS_PER_ROW < *packNumLevels) {
                 levelIndex += LEVELS_PER_ROW;
-                changed = true;
             }
             if (key == sk_Left && levelIndex > 0) {
                 levelIndex--;
-                changed = true;
             }
             if (key == sk_Right && levelIndex + 1 < *packNumLevels) {
                 levelIndex++;
-                changed = true;
             }
 
             if (key == sk_Clear) {
-                if (numLevelPacks > 0) setView(VIEW_TITLE);
+                if (numLevelPacks > 1) setView(VIEW_TITLE);
                 else toExit = true;
                 return;
             }
@@ -141,8 +129,6 @@ void doInput() {
         default:
             break;
     }
-
-    if (changed) drawView();
 }
 
 void setView(view_t newView) {
@@ -250,6 +236,8 @@ void loadLevel(uint8_t index) {
     for (read_ptr++; *read_ptr != 0xff; read_ptr += 2) {
         map[read_ptr[0]][read_ptr[1]] = (cell_t){ENTITY_CHEST, 0};
     }
+
+    levelWinAnimFrame = 0;
 }
 
 void saveLevel() {

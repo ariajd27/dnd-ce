@@ -113,15 +113,12 @@ BB1_3:
 	call	_gfx_SetTextFGColor
 	pop	hl
 	ld	hl, (_packTitle)
-	ld	de, 48
-	push	de
-	ld	de, 78
+	ld	de, 49
 	push	de
 	push	hl
-	call	_gfx_PrintStringXY
+	call	_printCentered
 	ld	iyl, 40
 	ld	c, 6
-	pop	hl
 	pop	hl
 	pop	hl
 	ld	e, 0
@@ -284,11 +281,8 @@ BB1_17:
 	ld	hl, (_levelTitle)
 	ld	de, 74
 	push	de
-	ld	de, 64
-	push	de
 	push	hl
-	call	_gfx_PrintStringXY
-	pop	hl
+	call	_printCentered
 	pop	hl
 	pop	hl
 	ld	hl, 3
@@ -337,12 +331,22 @@ BB1_21:
 	sbc	hl, bc
 	jr	nz, BB1_23
 	call	_drawBackground
-	ld	hl, 2
+	ld	hl, 10
+	push	hl
+	ld	hl, 73
+	push	hl
+	ld	hl, _title_data
+	push	hl
+	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
 	push	hl
 	call	_gfx_SetTextFGColor
 	pop	hl
 	ld	hl, (_levelTitle)
-	ld	de, 16
+	ld	de, 49
 	push	de
 	push	hl
 	call	_printCentered
@@ -375,7 +379,7 @@ BB2_1:
 	ex	de, hl
 	ld	bc, -4
 	call	__imulu
-	ld	de, 160
+	ld	de, 164
 	add	hl, de
 	ld	de, 0
 	ld	e, (ix + 9)
@@ -403,8 +407,7 @@ _drawTiles:
 	push	hl
 	call	_drawWalls
 	pop	hl
-	call	_drawTotals
-	call	_drawErrors
+	call	_drawErrorsAndTotals
 	ld	hl, (_tileset_tiles_data)
 	ld	(ix - 3), hl
 	ld	a, (_cursorCol)
@@ -649,25 +652,25 @@ BB4_26:
 	section	.text,"ax",@progbits
 	public	_drawEntities
 _drawEntities:
-	ld	hl, -18
+	ld	hl, -15
 	call	__frameset
 	ld	hl, _map
 	ld	(ix - 3), hl
 	ld	de, 0
-	ld	bc, 8
 BB5_1:
+	ld	bc, 8
 	push	de
 	pop	hl
 	or	a, a
 	sbc	hl, bc
 	jp	z, BB5_11
-	ld	(ix - 12), de
+	ld	(ix - 9), de
 	ex	de, hl
 	ld	c, 4
 	call	__ishl
 	ld	de, 96
 	add	hl, de
-	ld	(ix - 15), hl
+	ld	(ix - 12), hl
 	ld	hl, (ix - 3)
 	ld	(ix - 6), hl
 	ld	iy, 94
@@ -683,7 +686,6 @@ BB5_3:
 	and	a, 7
 	cp	a, 2
 	ld	hl, _tileset_tiles_data+3
-	ld	bc, (ix - 18)
 	jr	z, BB5_8
 	cp	a, 3
 	ld	hl, _tileset_tiles_data+6
@@ -696,7 +698,12 @@ BB5_3:
 	add	a, 4
 	or	a, a
 	sbc	hl, hl
+	push	hl
+	pop	de
+	ld	e, a
+	ld	a, (_levelWinAnimFrame)
 	ld	l, a
+	add	hl, de
 	ld	bc, 3
 	call	__imulu
 	push	hl
@@ -704,34 +711,33 @@ BB5_3:
 	ld	hl, _tileset_tiles_data
 	add	hl, de
 BB5_8:
-	ld	bc, (hl)
-BB5_9:
+	ld	hl, (hl)
 	push	iy
-	ld	hl, (ix - 15)
+	ld	de, (ix - 12)
+	push	de
 	push	hl
-	ld	(ix - 18), bc
-	push	bc
-	ld	(ix - 9), iy
+	ld	(ix - 15), iy
 	call	_gfx_RLETSprite
+	ld	iy, (ix - 15)
 	pop	hl
 	pop	hl
 	pop	hl
+BB5_9:
 	ld	de, 16
-	ld	hl, (ix - 9)
-	add	hl, de
-	ld	(ix - 9), hl
+	add	iy, de
+	lea	hl, iy
 	ld	iy, (ix - 6)
 	lea	iy, iy + 8
 	ld	(ix - 6), iy
-	ld	iy, (ix - 9)
+	push	hl
+	pop	iy
 	jr	BB5_3
 BB5_10:
-	ld	de, (ix - 12)
+	ld	de, (ix - 9)
 	inc	de
 	ld	hl, (ix - 3)
 	inc	hl
 	ld	(ix - 3), hl
-	ld	bc, 8
 	jp	BB5_1
 BB5_11:
 	ld	sp, ix
@@ -740,40 +746,165 @@ BB5_11:
 	section	.text,"ax",@progbits
 
 	section	.text,"ax",@progbits
-	public	_drawTotals
-_drawTotals:
+	public	_drawErrorsAndTotals
+_drawErrorsAndTotals:
 	ld	hl, -13
 	call	__frameset
-	xor	a, a
-	ld	hl, 96
-	ld	(ix - 9), hl
+	ld	a, 1
 	ld	bc, 0
-	ld	hl, 94
-	ld	(ix - 6), hl
 	ld	de, 8
-	ld	iyl, a
-	ld	(ix - 3), bc
+	push	bc
+	pop	iy
+	ld	(ix - 10), a
 BB6_1:
-	ld	hl, (ix - 3)
+	lea	hl, iy
 	or	a, a
 	sbc	hl, de
-	jr	z, BB6_5
+	jr	z, BB6_8
+	ld	(ix - 3), iy
+	push	iy
+	call	_wallsInCol
+	ld	c, a
+	pop	de
 	ld	hl, (_colTargets)
 	ld	de, (ix - 3)
 	add	hl, de
 	ld	a, (hl)
-	ld	(ix - 13), a
-	ld	(ix - 12), iy
+	cp	a, c
+	ex	de, hl
+	jr	nc, BB6_7
+	ld	c, 4
+	call	__ishl
+	ld	de, 96
+	add	hl, de
+	ld	(ix - 6), hl
+	ld	iy, 94
+BB6_4:
+	lea	hl, iy
+	ld	de, 222
+	or	a, a
+	sbc	hl, de
+	jr	z, BB6_6
+	ld	hl, (_tileset_tiles_data+9)
+	push	iy
+	ld	de, (ix - 6)
+	push	de
+	push	hl
+	ld	(ix - 9), iy
+	call	_gfx_RLETSprite
+	ld	iy, (ix - 9)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, 16
+	add	iy, de
+	jr	BB6_4
+BB6_6:
+	xor	a, a
+	ld	(ix - 10), a
+	ld	hl, (ix - 3)
+BB6_7:
+	inc	hl
+	ld	bc, 0
+	push	hl
+	pop	iy
+	ld	de, 8
+	jr	BB6_1
+BB6_8:
+	push	bc
+	pop	iy
+BB6_9:
+	lea	hl, iy
+	or	a, a
+	sbc	hl, de
+	jr	z, BB6_16
+	ld	(ix - 3), iy
+	push	iy
+	call	_wallsInRow
+	ld	c, a
+	pop	de
+	ld	hl, (_rowTargets)
+	ld	de, (ix - 3)
+	add	hl, de
+	ld	a, (hl)
+	cp	a, c
+	ex	de, hl
+	jr	nc, BB6_15
+	ld	c, 4
+	call	__ishl
+	ld	de, 94
+	add	hl, de
+	ld	(ix - 6), hl
+	ld	iy, 96
+BB6_12:
+	lea	hl, iy
+	ld	de, 224
+	or	a, a
+	sbc	hl, de
+	jr	z, BB6_14
+	ld	hl, (_tileset_tiles_data+9)
+	ld	de, (ix - 6)
+	push	de
+	push	iy
+	push	hl
+	ld	(ix - 9), iy
+	call	_gfx_RLETSprite
+	ld	iy, (ix - 9)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	de, 16
+	add	iy, de
+	jr	BB6_12
+BB6_14:
+	xor	a, a
+	ld	(ix - 10), a
+	ld	hl, (ix - 3)
+BB6_15:
+	inc	hl
+	ld	bc, 0
+	push	hl
+	pop	iy
+	ld	de, 8
+	jr	BB6_9
+BB6_16:
+	xor	a, a
+	ld	iyl, a
+	ld	hl, 96
+	ld	(ix - 9), hl
+	ld	(ix - 6), bc
+	inc	a
+	ld	(ix - 3), a
+BB6_17:
+	ld	hl, (ix - 6)
+	or	a, a
+	sbc	hl, de
+	jr	z, BB6_23
+	ld	(ix - 13), iy
 	push	iy
 	call	_wallsInCol
 	pop	hl
-	ld	l, (ix - 13)
-	cp	a, l
+	ld	hl, (_colTargets)
+	ld	de, (ix - 6)
+	add	hl, de
+	ld	c, (hl)
+	cp	a, c
+	ld	l, -1
+	jr	z, BB6_20
+	ld	l, 0
+BB6_20:
+	ld	a, l
+	and	a, 1
+	ld	e, a
+	ld	a, (ix - 3)
+	and	a, e
+	ld	(ix - 3), a
+	bit	0, l
 	ld	a, 9
-	jr	z, BB6_4
+	jr	nz, BB6_22
 	xor	a, a
-BB6_4:
-	add	a, l
+BB6_22:
+	add	a, c
 	or	a, a
 	sbc	hl, hl
 	ld	l, a
@@ -793,43 +924,55 @@ BB6_4:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	hl, (ix - 3)
+	ld	hl, (ix - 6)
 	inc	hl
-	ld	(ix - 3), hl
+	ld	(ix - 6), hl
 	ld	de, 16
 	ld	hl, (ix - 9)
 	add	hl, de
 	ld	(ix - 9), hl
-	ld	iy, (ix - 12)
+	ld	iy, (ix - 13)
 	inc	iyl
 	ld	bc, 0
 	ld	de, 8
-	jr	BB6_1
-BB6_5:
+	jr	BB6_17
+BB6_23:
 	xor	a, a
 	ld	iyl, a
-BB6_6:
+	ld	hl, 94
+	ld	(ix - 6), hl
+BB6_24:
 	push	bc
 	pop	hl
 	or	a, a
 	sbc	hl, de
-	jr	z, BB6_10
-	ld	hl, (_rowTargets)
-	ld	(ix - 3), bc
-	add	hl, bc
-	ld	a, (hl)
-	ld	(ix - 12), a
-	ld	(ix - 9), iy
+	jr	z, BB6_30
+	ld	(ix - 13), iy
 	push	iy
+	ld	(ix - 9), bc
 	call	_wallsInRow
 	pop	hl
-	ld	l, (ix - 12)
-	cp	a, l
+	ld	hl, (_rowTargets)
+	ld	de, (ix - 9)
+	add	hl, de
+	ld	c, (hl)
+	cp	a, c
+	ld	l, -1
+	jr	z, BB6_27
+	ld	l, 0
+BB6_27:
+	ld	a, l
+	and	a, 1
+	ld	e, a
+	ld	a, (ix - 3)
+	and	a, e
+	ld	(ix - 3), a
+	bit	0, l
 	ld	a, 9
-	jr	z, BB6_9
+	jr	nz, BB6_29
 	xor	a, a
-BB6_9:
-	add	a, l
+BB6_29:
+	add	a, c
 	or	a, a
 	sbc	hl, hl
 	ld	l, a
@@ -849,132 +992,59 @@ BB6_9:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	bc, (ix - 3)
+	ld	bc, (ix - 9)
 	inc	bc
 	ld	de, 16
 	ld	hl, (ix - 6)
 	add	hl, de
 	ld	(ix - 6), hl
-	ld	iy, (ix - 9)
+	ld	iy, (ix - 13)
 	inc	iyl
 	ld	de, 8
-	jr	BB6_6
-BB6_10:
-	ld	sp, ix
-	pop	ix
-	ret
-	section	.text,"ax",@progbits
-
-	section	.text,"ax",@progbits
-	public	_drawErrors
-_drawErrors:
-	ld	hl, -9
-	call	__frameset
-	ld	de, 0
-	ld	bc, 8
-	push	de
-	pop	iy
-BB7_1:
-	lea	hl, iy
+	jr	BB6_24
+BB6_30:
+	ld	a, (ix - 10)
+	and	a, 1
+	bit	0, (ix - 3)
+	jr	z, BB6_39
+	bit	0, a
+	jr	z, BB6_39
+	ld	a, (_levelWinAnimFrame)
 	or	a, a
-	sbc	hl, bc
-	jr	z, BB7_7
-	ld	(ix - 3), iy
-	push	iy
-	call	_wallsInCol
-	ld	c, a
-	pop	de
-	ld	hl, (_colTargets)
-	ld	de, (ix - 3)
-	add	hl, de
-	ld	a, (hl)
-	cp	a, c
-	ex	de, hl
-	jr	nc, BB7_6
-	ld	c, 4
-	call	__ishl
-	ld	de, 96
-	add	hl, de
-	ld	(ix - 6), hl
-	ld	iy, 94
-BB7_4:
-	lea	hl, iy
-	ld	de, 222
-	or	a, a
-	sbc	hl, de
-	ld	hl, (ix - 3)
-	jr	z, BB7_6
-	ld	hl, (_tileset_tiles_data+9)
-	push	iy
-	ld	de, (ix - 6)
-	push	de
+	jr	nz, BB6_34
+	ld	a, 1
+	ld	(_levelWinAnimFrame), a
+	call	_clock
+	ld	a, e
+	ld	(_lastWinAnimFrame), hl
+	ld	(_lastWinAnimFrame+3), a
+	jr	BB6_39
+BB6_34:
+	call	_clock
+	ld	bc, (_lastWinAnimFrame)
+	ld	a, (_lastWinAnimFrame+3)
+	call	__lsub
 	push	hl
-	ld	(ix - 9), iy
-	call	_gfx_RLETSprite
-	ld	iy, (ix - 9)
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	de, 16
-	add	iy, de
-	jr	BB7_4
-BB7_6:
-	inc	hl
-	push	hl
-	pop	iy
-	ld	de, 0
-	ld	bc, 8
-	jr	BB7_1
-BB7_7:
-	push	de
-	pop	hl
-	or	a, a
-	sbc	hl, bc
-	jr	z, BB7_13
-	push	de
-	ld	(ix - 3), de
-	call	_wallsInRow
-	ld	c, a
-	pop	de
-	ld	de, (ix - 3)
-	ld	hl, (_rowTargets)
-	add	hl, de
-	ld	a, (hl)
-	cp	a, c
-	jr	nc, BB7_12
-	ex	de, hl
-	ld	c, 4
-	call	__ishl
-	ld	de, 94
-	add	hl, de
-	ld	(ix - 6), hl
-	ld	iy, 96
-BB7_10:
-	lea	hl, iy
-	ld	de, 224
-	or	a, a
-	sbc	hl, de
-	ld	de, (ix - 3)
-	jr	z, BB7_12
-	ld	hl, (_tileset_tiles_data+9)
-	ld	de, (ix - 6)
-	push	de
-	push	iy
-	push	hl
-	ld	(ix - 9), iy
-	call	_gfx_RLETSprite
-	ld	iy, (ix - 9)
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	de, 16
-	add	iy, de
-	jr	BB7_10
-BB7_12:
-	inc	de
-	ld	bc, 8
-	jr	BB7_7
-BB7_13:
+	pop	bc
+	ld	a, e
+	ld	hl, 10000
+	ld	e, 0
+	call	__lcmpu
+	jr	nc, BB6_39
+	call	_clock
+	ld	a, e
+	ld	(_lastWinAnimFrame), hl
+	ld	(_lastWinAnimFrame+3), a
+	ld	a, (_levelWinAnimFrame)
+	cp	a, 3
+	jr	nc, BB6_37
+	inc	a
+	jr	BB6_38
+BB6_37:
+	dec	a
+BB6_38:
+	ld	(_levelWinAnimFrame), a
+BB6_39:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -993,61 +1063,61 @@ _doInput:
 	pop	hl
 	or	a, a
 	sbc	hl, de
-	jp	nc, BB8_60
+	jp	nc, BB7_59
 	ld	iyh, 1
 	ld	de, 6
-	ld	hl, JTI8_0
+	ld	hl, JTI7_0
 	add	hl, bc
 	add	hl, bc
 	add	hl, bc
 	ld	hl, (hl)
 	jp	(hl)
-BB8_2:
+BB7_2:
 	push	de
 	pop	bc
 	ld	a, iyl
 	add	a, -15
 	cp	a, 22
-	jp	nc, BB8_60
+	jp	nc, BB7_59
 	ld	de, 0
 	ld	e, a
-	ld	hl, JTI8_1
+	ld	hl, JTI7_1
 	add	hl, de
 	add	hl, de
 	add	hl, de
 	ld	hl, (hl)
 	jp	(hl)
-BB8_4:
+BB7_4:
 	ld	hl, 2
-	jp	BB8_57
-BB8_5:
+	jp	BB7_56
+BB7_5:
 	ld	a, iyl
 	dec	a
 	cp	a, 4
-	jp	c, BB8_15
+	jp	c, BB7_15
 	ld	a, iyl
 	cp	a, 15
 	ld	hl, 0
-	jp	nz, BB8_22
+	jp	nz, BB7_22
 	ld	a, (_numLevelPacks)
-	or	a, a
-	jp	nz, BB8_21
-BB8_8:
+	cp	a, 2
+	jp	nc, BB7_21
+BB7_8:
 	ld	a, iyh
 	ld	(_toExit), a
-	jp	BB8_60
-BB8_9:
+	jp	BB7_59
+BB7_9:
 	ld	a, iyl
 	cp	a, 15
-	jr	z, BB8_11
+	jr	z, BB7_11
 	ld	a, iyl
 	cp	a, 54
-	jp	nz, BB8_60
-BB8_11:
+	jp	nz, BB7_59
+BB7_11:
 	or	a, a
 	sbc	hl, hl
-	jp	BB8_21
-BB8_12:
+	jp	BB7_21
+BB7_12:
 	push	af
 	ld	a, iyl
 	ld	(ix - 1), a
@@ -1074,28 +1144,28 @@ BB8_12:
 	ld	c, a
 	add	a, -3
 	cp	a, 2
-	jr	nc, BB8_18
+	jr	nc, BB7_18
 	ld	l, (ix - 1)
 	ld	a, l
 	dec	a
 	cp	a, 4
-	jp	c, BB8_24
+	jp	c, BB7_24
 	ld	a, l
 	cp	a, 15
-	jr	z, BB8_20
-	jp	BB8_60
-BB8_15:
+	jr	z, BB7_20
+	jp	BB7_59
+BB7_15:
 	ld	bc, 0
 	push	bc
 	pop	de
 	ld	e, a
-	ld	hl, JTI8_2
+	ld	hl, JTI7_2
 	add	hl, de
 	add	hl, de
 	add	hl, de
 	ld	hl, (hl)
 	jp	(hl)
-BB8_16:
+BB7_16:
 	ld	a, (_levelIndex)
 	push	bc
 	pop	iy
@@ -1107,30 +1177,30 @@ BB8_16:
 	lea	hl, iy
 	or	a, a
 	sbc	hl, bc
-	jp	nc, BB8_60
+	jp	nc, BB7_59
 	ld	a, iyl
-	jp	BB8_34
-BB8_18:
+	jp	BB7_34
+BB7_18:
 	ld	(ix - 8), iy
 	ld	e, (ix - 1)
 	ld	a, e
 	dec	a
 	cp	a, 4
-	jr	c, BB8_25
+	jr	c, BB7_25
 	ld	a, e
 	cp	a, 15
-	jp	nz, BB8_37
-BB8_20:
+	jp	nz, BB7_37
+BB7_20:
 	call	_saveLevel
 	ld	hl, 2
-BB8_21:
+BB7_21:
 	push	hl
 	call	_setView
-	jp	BB8_59
-BB8_22:
+	jp	BB7_58
+BB7_22:
 	ld	a, iyl
 	cp	a, 54
-	jp	nz, BB8_60
+	jp	nz, BB7_59
 	ld	a, (_levelIndex)
 	ld	l, a
 	push	hl
@@ -1140,48 +1210,50 @@ BB8_22:
 	ld	(_currentView), hl
 	xor	a, a
 	ld	(_cursorRow), a
-	jp	BB8_43
-BB8_24:
+	ld	(_cursorCol), a
+	call	_drawView
+	jp	BB7_59
+BB7_24:
 	or	a, a
 	sbc	hl, hl
 	push	hl
 	pop	bc
 	ld	c, a
-	ld	hl, JTI8_4
+	ld	hl, JTI7_4
 	add	hl, bc
 	add	hl, bc
 	add	hl, bc
 	ld	hl, (hl)
 	jp	(hl)
-BB8_25:
+BB7_25:
 	or	a, a
 	sbc	hl, hl
 	push	hl
 	pop	bc
 	ld	c, a
-	ld	hl, JTI8_3
+	ld	hl, JTI7_3
 	add	hl, bc
 	add	hl, bc
 	add	hl, bc
 	ld	hl, (hl)
 	jp	(hl)
-BB8_26:
+BB7_26:
 	ld	hl, (ix - 4)
 	ld	a, l
 	cp	a, 7
-	jp	nc, BB8_60
+	jp	nc, BB7_59
 	ld	hl, (ix - 4)
 	inc	l
-	jr	BB8_46
-BB8_28:
+	jr	BB7_46
+BB7_28:
 	ld	a, (_levelIndex)
 	ld	l, a
 	or	a, a
-	jp	z, BB8_60
+	jp	z, BB7_59
 	dec	l
 	ld	a, l
-	jr	BB8_34
-BB8_30:
+	jr	BB7_34
+BB7_30:
 	ld	a, (_levelIndex)
 	push	bc
 	pop	hl
@@ -1191,33 +1263,33 @@ BB8_30:
 	ld	c, (iy)
 	or	a, a
 	sbc	hl, bc
-	jp	nc, BB8_60
+	jp	nc, BB7_59
 	inc	a
-	jr	BB8_34
-BB8_32:
+	jr	BB7_34
+BB7_32:
 	ld	a, (_levelIndex)
 	cp	a, 6
-	jp	c, BB8_60
+	jp	c, BB7_59
 	add	a, -6
-BB8_34:
+BB7_34:
 	ld	(_levelIndex), a
-	jr	BB8_47
-BB8_35:
+	jr	BB7_59
+BB7_35:
 	ld	a, (ix - 5)
 	cp	a, 7
-	jr	nc, BB8_60
+	jr	nc, BB7_59
 	inc	a
-	jr	BB8_43
-BB8_37:
+	jr	BB7_43
+BB7_37:
 	ld	a, e
 	cp	a, 48
-	jr	nz, BB8_48
+	jr	nz, BB7_47
 	ld	a, c
 	cp	a, 2
 	ld	e, 0
-	jr	z, BB8_40
+	jr	z, BB7_40
 	ld	e, 2
-BB8_40:
+BB7_40:
 	ld	a, l
 	and	a, -8
 	ld	l, a
@@ -1225,129 +1297,127 @@ BB8_40:
 	add	a, l
 	ld	hl, (ix - 8)
 	ld	(hl), a
-	jr	BB8_47
-BB8_41:
+	jr	BB7_59
+BB7_41:
 	ld	l, (ix - 5)
 	ld	a, l
 	or	a, a
-	jr	z, BB8_60
+	jr	z, BB7_59
 	dec	l
 	ld	a, l
-BB8_43:
+BB7_43:
 	ld	(_cursorCol), a
-	jr	BB8_47
-BB8_44:
+	jr	BB7_59
+BB7_44:
 	ld	hl, (ix - 4)
 	ld	a, l
 	or	a, a
-	jr	z, BB8_60
+	jr	z, BB7_59
 	ld	hl, (ix - 4)
 	dec	l
-BB8_46:
+BB7_46:
 	ld	a, l
 	ld	(_cursorRow), a
-BB8_47:
-	call	_drawView
-	jr	BB8_60
-BB8_48:
+	jr	BB7_59
+BB7_47:
 	ld	a, e
 	cp	a, 54
-	jr	nz, BB8_60
+	jr	nz, BB7_59
 	ld	a, c
 	cp	a, 1
 	ld	iy, (ix - 8)
-	jr	nz, BB8_62
+	jr	nz, BB7_61
 	ld	e, 0
-	jr	BB8_63
-BB8_51:
+	jr	BB7_62
+BB7_50:
 	ld	hl, 5
-	jr	BB8_57
-BB8_52:
+	jr	BB7_56
+BB7_51:
 	ld	hl, 1
-	jr	BB8_57
-BB8_53:
+	jr	BB7_56
+BB7_52:
 	ld	hl, 4
-	jr	BB8_57
-BB8_54:
+	jr	BB7_56
+BB7_53:
 	ld	hl, 7
-	jr	BB8_57
-BB8_55:
+	jr	BB7_56
+BB7_54:
 	or	a, a
 	sbc	hl, hl
-	jr	BB8_57
-BB8_56:
+	jr	BB7_56
+BB7_55:
 	ld	hl, 3
-BB8_57:
+BB7_56:
 	push	hl
-BB8_58:
+BB7_57:
 	call	_loadLevelPack
-BB8_59:
+BB7_58:
 	pop	hl
-BB8_60:
+BB7_59:
 	ld	sp, ix
 	pop	ix
 	ret
-BB8_61:
+BB7_60:
 	push	bc
-	jr	BB8_58
-BB8_62:
+	jr	BB7_57
+BB7_61:
 	ld	e, 1
-BB8_63:
+BB7_62:
 	ld	a, l
 	and	a, -8
 	add	a, e
 	ld	(iy), a
-	jr	BB8_47
+	jr	BB7_59
 	section	.text,"ax",@progbits
 	section	.rodata,"a",@progbits
-	private	JTI8_0
-JTI8_0:
-	dl	BB8_2
-	dl	BB8_9
-	dl	BB8_5
-	dl	BB8_12
-	private	JTI8_1
-JTI8_1:
-	dl	BB8_8
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_4
-	dl	BB8_51
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_52
-	dl	BB8_53
-	dl	BB8_54
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_60
-	dl	BB8_55
-	dl	BB8_56
-	dl	BB8_61
-	private	JTI8_2
-JTI8_2:
-	dl	BB8_16
-	dl	BB8_28
-	dl	BB8_30
-	dl	BB8_32
-	private	JTI8_3
-JTI8_3:
-	dl	BB8_26
-	dl	BB8_41
-	dl	BB8_35
-	dl	BB8_44
-	private	JTI8_4
-JTI8_4:
-	dl	BB8_26
-	dl	BB8_41
-	dl	BB8_35
-	dl	BB8_44
+	private	JTI7_0
+JTI7_0:
+	dl	BB7_2
+	dl	BB7_9
+	dl	BB7_5
+	dl	BB7_12
+	private	JTI7_1
+JTI7_1:
+	dl	BB7_8
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_4
+	dl	BB7_50
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_51
+	dl	BB7_52
+	dl	BB7_53
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_59
+	dl	BB7_54
+	dl	BB7_55
+	dl	BB7_60
+	private	JTI7_2
+JTI7_2:
+	dl	BB7_16
+	dl	BB7_28
+	dl	BB7_30
+	dl	BB7_32
+	private	JTI7_3
+JTI7_3:
+	dl	BB7_26
+	dl	BB7_41
+	dl	BB7_35
+	dl	BB7_44
+	private	JTI7_4
+JTI7_4:
+	dl	BB7_26
+	dl	BB7_41
+	dl	BB7_35
+	dl	BB7_44
 
 	section	.text,"ax",@progbits
 	public	_setView
@@ -1361,41 +1431,41 @@ _setView:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jr	nz, BB9_3
+	jr	nz, BB8_3
 	call	_findLevelPacks
 	ld	a, (_numLevelPacks)
 	cp	a, 1
-	jr	nz, BB9_7
+	jr	nz, BB8_7
 	or	a, a
 	sbc	hl, hl
 	push	hl
 	call	_loadLevelPack
 	pop	hl
-	jr	BB9_8
-BB9_3:
+	jr	BB8_8
+BB8_3:
 	ld	bc, 2
 	push	de
 	pop	hl
 	or	a, a
 	sbc	hl, bc
-	jr	nz, BB9_5
+	jr	nz, BB8_5
 	ld	a, (_levelIndex)
 	ld	l, a
 	push	hl
 	call	_loadLevel
 	pop	hl
-	jr	BB9_7
-BB9_5:
+	jr	BB8_7
+BB8_5:
 	ld	bc, 3
 	ex	de, hl
 	or	a, a
 	sbc	hl, bc
-	jr	nz, BB9_7
+	jr	nz, BB8_7
 	ld	(_cursorRow), a
 	ld	(_cursorCol), a
-BB9_7:
+BB8_7:
 	call	_drawView
-BB9_8:
+BB8_8:
 	pop	ix
 	ret
 	section	.text,"ax",@progbits
@@ -1426,23 +1496,23 @@ _saveLevel:
 	ld	d, h
 	ld	hl, (ix - 3)
 	add	hl, de
-BB10_1:
+BB9_1:
 	ld	a, (hl)
 	inc	hl
 	or	a, a
-	jr	nz, BB10_1
+	jr	nz, BB9_1
 	ld	(ix - 3), hl
 	ld	de, 8
 	or	a, a
 	sbc	hl, hl
 	push	hl
 	pop	bc
-BB10_3:
+BB9_3:
 	push	bc
 	pop	hl
 	or	a, a
 	sbc	hl, de
-	jr	z, BB10_11
+	jr	z, BB9_11
 	ld	hl, (ix - 3)
 	ld	(ix - 6), bc
 	add	hl, bc
@@ -1451,13 +1521,13 @@ BB10_3:
 	ld	e, 0
 	ld	a, e
 	ld	bc, 0
-BB10_5:
+BB9_5:
 	push	bc
 	pop	hl
 	ld	de, 8
 	or	a, a
 	sbc	hl, de
-	jr	z, BB10_10
+	jr	z, BB9_10
 	srl	a
 	ld	hl, (ix - 12)
 	ld	(hl), a
@@ -1467,27 +1537,27 @@ BB10_5:
 	ld	a, (iy)
 	and	a, 7
 	cp	a, 1
-	jr	nz, BB10_8
+	jr	nz, BB9_8
 	ld	a, l
 	add	a, -128
 	ld	hl, (ix - 3)
 	ld	de, (ix - 6)
 	add	hl, de
 	ld	(hl), a
-	jr	BB10_9
-BB10_8:
+	jr	BB9_9
+BB9_8:
 	ld	a, l
-BB10_9:
+BB9_9:
 	inc	bc
 	ld	iy, (ix - 9)
-	jr	BB10_5
-BB10_10:
+	jr	BB9_5
+BB9_10:
 	ld	bc, (ix - 6)
 	inc	bc
 	lea	iy, iy + 8
 	ld	de, 8
-	jr	BB10_3
-BB10_11:
+	jr	BB9_3
+BB9_11:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -1516,25 +1586,25 @@ _loadLevel:
 	ld	d, h
 	add	iy, de
 	ld	(_levelTitle), iy
-BB11_1:
+BB10_1:
 	lea	hl, iy
 	inc	iy
 	ld	(ix - 6), hl
 	ld	a, (hl)
 	or	a, a
-	jr	nz, BB11_1
+	jr	nz, BB10_1
 	ld	(ix - 3), iy
 	ld	de, 8
 	ld	hl, _map
 	push	hl
 	pop	iy
 	ld	bc, 0
-BB11_3:
+BB10_3:
 	push	bc
 	pop	hl
 	or	a, a
 	sbc	hl, de
-	jr	z, BB11_8
+	jr	z, BB10_8
 	lea	hl, iy
 	ld	iy, (ix - 3)
 	ld	(ix - 9), bc
@@ -1543,13 +1613,13 @@ BB11_3:
 	push	hl
 	pop	iy
 	ld	de, 0
-BB11_5:
+BB10_5:
 	push	de
 	pop	hl
 	ld	bc, 8
 	or	a, a
 	sbc	hl, bc
-	jr	z, BB11_7
+	jr	z, BB10_7
 	lea	hl, iy
 	add	hl, de
 	ld	c, a
@@ -1558,25 +1628,25 @@ BB11_5:
 	ld	a, c
 	srl	a
 	inc	de
-	jr	BB11_5
-BB11_7:
+	jr	BB10_5
+BB10_7:
 	ld	bc, (ix - 9)
 	inc	bc
 	lea	iy, iy + 8
 	ld	de, 8
-	jr	BB11_3
-BB11_8:
+	jr	BB10_3
+BB10_8:
 	ld	iy, (ix - 6)
 	lea	hl, iy + 9
 	ld	(_colTargets), hl
 	lea	hl, iy + 17
 	ld	(_rowTargets), hl
 	ld	iy, (ix - 3)
-BB11_9:
+BB10_9:
 	ld	a, (iy + 24)
 	ld	de, 0
 	cp	a, -1
-	jr	z, BB11_11
+	jr	z, BB10_11
 	push	de
 	pop	hl
 	ld	l, a
@@ -1594,15 +1664,15 @@ BB11_9:
 	add	a, 4
 	ld	(hl), a
 	lea	iy, iy + 3
-	jr	BB11_9
-BB11_11:
+	jr	BB10_9
+BB10_11:
 	push	de
 	pop	bc
 	lea	hl, iy
 	add	iy, bc
 	ld	a, (iy + 25)
 	cp	a, -1
-	jr	z, BB11_13
+	jr	z, BB10_13
 	ld	bc, 0
 	push	bc
 	pop	iy
@@ -1630,8 +1700,10 @@ BB11_11:
 	add	hl, de
 	ex	de, hl
 	ld	iy, (ix - 3)
-	jr	BB11_11
-BB11_13:
+	jr	BB10_11
+BB10_13:
+	xor	a, a
+	ld	(_levelWinAnimFrame), a
 	ld	sp, ix
 	pop	ix
 	ret
@@ -1648,13 +1720,13 @@ _loadLevelPack:
 	ld	l, a
 	ld	a, c
 	cp	a, l
-	jp	nc, BB12_7
+	jp	nc, BB11_7
 	ld	hl, 0
 	ld	(ix - 3), hl
-BB12_2:
+BB11_2:
 	ld	a, c
 	cp	a, e
-	jr	c, BB12_4
+	jr	c, BB11_4
 	ld	hl, _.str.24
 	push	hl
 	pea	ix - 3
@@ -1665,8 +1737,8 @@ BB12_2:
 	pop	de
 	ld	e, (ix - 6)
 	inc	e
-	jr	BB12_2
-BB12_4:
+	jr	BB11_2
+BB11_4:
 	ld	de, _.str.1.23
 	push	de
 	push	hl
@@ -1695,14 +1767,14 @@ BB12_4:
 	call	_ti_GetDataPtr
 	pop	de
 	ld	(_packTitle), hl
-BB12_5:
+BB11_5:
 	push	hl
 	pop	iy
 	ld	(_packNumLevels), iy
 	inc	hl
 	ld	a, (iy)
 	or	a, a
-	jr	nz, BB12_5
+	jr	nz, BB11_5
 	ld	(_packNumLevels), hl
 	lea	hl, iy + 2
 	ld	(_packToc), hl
@@ -1716,7 +1788,7 @@ BB12_5:
 	push	hl
 	call	_setView
 	pop	hl
-BB12_7:
+BB11_7:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -1732,7 +1804,7 @@ _findLevelPacks:
 	ld	de, _.str.24
 	ld	(_numLevelPacks), a
 	ld	(ix - 3), hl
-BB13_1:
+BB12_1:
 	push	de
 	pea	ix - 3
 	call	_ti_Detect
@@ -1741,7 +1813,7 @@ BB13_1:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jr	z, BB13_3
+	jr	z, BB12_3
 	ld	de, _.str.1.23
 	push	de
 	push	hl
@@ -1784,8 +1856,8 @@ BB13_1:
 	call	_ti_Close
 	pop	hl
 	ld	de, _.str.24
-	jr	BB13_1
-BB13_3:
+	jr	BB12_1
+BB12_3:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -1799,7 +1871,7 @@ _listLevelPacks:
 	ld	hl, 1
 	ld	iy, 80
 	ld	bc, _levelPackNames
-BB14_1:
+BB13_1:
 	ld	(ix - 3), hl
 	dec	hl
 	ld	a, (_numLevelPacks)
@@ -1807,7 +1879,7 @@ BB14_1:
 	ld	e, a
 	or	a, a
 	sbc	hl, de
-	jr	nc, BB14_3
+	jr	nc, BB13_3
 	ld	(ix - 6), bc
 	ld	hl, (ix - 6)
 	ld	hl, (hl)
@@ -1842,8 +1914,8 @@ BB14_1:
 	ld	iy, (ix - 9)
 	add	iy, de
 	inc	hl
-	jr	BB14_1
-BB14_3:
+	jr	BB13_1
+BB13_3:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -1856,7 +1928,7 @@ _main:
 	or	a, a
 	sbc	hl, hl
 	push	hl
-	ld	hl, 40
+	ld	hl, 42
 	push	hl
 	ld	hl, _default_palette
 	push	hl
@@ -1881,19 +1953,18 @@ _main:
 	push	hl
 	call	_setView
 	pop	hl
+BB14_1:
 	ld	a, (_toExit)
-BB15_1:
 	bit	0, a
-	jr	nz, BB15_4
-	call	_doInput
+	jr	nz, BB14_4
 	ld	a, (-1048544)
 	and	a, 1
 	bit	0, a
-	jr	nz, BB15_4
-	ld	a, (_toExit)
-	and	a, 1
-	jr	BB15_1
-BB15_4:
+	jr	nz, BB14_4
+	call	_doInput
+	call	_drawView
+	jr	BB14_1
+BB14_4:
 	ld	a, 1
 	ld	(-1048536), a
 	call	_gfx_End
@@ -1912,7 +1983,7 @@ _getCell:
 	ld	a, b
 	or	a, c
 	cp	a, 8
-	jr	nc, BB16_2
+	jr	nc, BB15_2
 	ld	iy, _map
 	ld	de, 0
 	push	de
@@ -1927,10 +1998,10 @@ _getCell:
 	add	iy, bc
 	add	iy, de
 	ld	a, (iy)
-	jr	BB16_3
-BB16_2:
+	jr	BB15_3
+BB15_2:
 	ld	a, 1
-BB16_3:
+BB15_3:
 	ld	(hl), a
 	pop	ix
 	ret
@@ -1953,14 +2024,14 @@ _wallsInRow:
 	add	iy, bc
 	ld	(ix - 3), iy
 	ld	bc, 8
-BB17_1:
+BB16_1:
 	push	de
 	pop	hl
 	push	bc
 	pop	iy
 	or	a, a
 	sbc	hl, bc
-	jr	z, BB17_5
+	jr	z, BB16_5
 	ld	c, a
 	ld	hl, (ix - 3)
 	add	hl, de
@@ -1968,15 +2039,15 @@ BB17_1:
 	and	a, 7
 	cp	a, 1
 	ld	l, 1
-	jr	z, BB17_4
+	jr	z, BB16_4
 	ld	l, 0
-BB17_4:
+BB16_4:
 	ld	a, c
 	add	a, l
 	inc	de
 	lea	bc, iy
-	jr	BB17_1
-BB17_5:
+	jr	BB16_1
+BB16_5:
 	pop	hl
 	pop	ix
 	ret
@@ -1996,11 +2067,11 @@ _wallsInCol:
 	ld	(ix - 3), hl
 	ld	bc, 64
 	ld	d, 1
-BB18_1:
+BB17_1:
 	lea	hl, iy
 	or	a, a
 	sbc	hl, bc
-	jr	z, BB18_5
+	jr	z, BB17_5
 	lea	bc, iy
 	ld	hl, (ix - 3)
 	add	hl, bc
@@ -2008,17 +2079,17 @@ BB18_1:
 	and	a, 7
 	cp	a, 1
 	ld	l, d
-	jr	z, BB18_4
+	jr	z, BB17_4
 	ld	l, 0
-BB18_4:
+BB17_4:
 	ld	a, e
 	add	a, l
 	ld	e, a
 	ld	bc, 8
 	add	iy, bc
 	ld	bc, 64
-	jr	BB18_1
-BB18_5:
+	jr	BB17_1
+BB17_5:
 	ld	a, e
 	pop	hl
 	pop	ix
@@ -2039,6 +2110,11 @@ _.str:
 	private	_.str.1
 _.str.1:
 	db	"No level packs found!", 0
+
+	section	.bss,"aw",@nobits
+	public	_lastWinAnimFrame
+_lastWinAnimFrame:
+	rb	4
 
 	section	.bss,"aw",@nobits
 	public	_currentView
@@ -2119,6 +2195,11 @@ _colTargets:
 	public	_rowTargets
 _rowTargets:
 	rb	3
+
+	section	.bss,"aw",@nobits
+	public	_levelWinAnimFrame
+_levelWinAnimFrame:
+	rb	1
 
 	section	.data,"aw",@progbits
 	public	_digits_tile_0_data
@@ -2245,7 +2326,7 @@ _tileset_tile_1_data:
 	section	.data,"aw",@progbits
 	public	_tileset_tile_2_data
 _tileset_tile_2_data:
-	db	"", 10, "", 10, "", 10, 10, 10, 10, 10, 10, "", 10, "", 10, "", 10, 10, 10, 10, 10, 10, "", 10, 10, "", 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, 10, 10, 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, 10, 10, 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, 10, 10, 10, 10, "", 10, 10, ""
+	db	"", 10, "", 10, "", 10, 10, 10, 10, 10, 10, "", 10, "", 10, "", 10, 10, 10, 10, 10, 10, "", 10, 10, "", 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, 10, 10, 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, 10, 10, 10, 10, "", 10, 10, "", 10, 10, "", 10, 10, 10, 10, 10, 10, "", 10, 10, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_3_data
@@ -2255,82 +2336,82 @@ _tileset_tile_3_data:
 	section	.data,"aw",@progbits
 	public	_tileset_tile_4_data
 _tileset_tile_4_data:
-	db	"", 13, 13, "", 13, 13, "", 13, 13, 13, 13, "", 10, "", 13, "", 13, "", 13, "", 13, 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, "", 13, "	", 13, ""
+	db	"", 10, "	"
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_5_data
 _tileset_tile_5_data:
-	db	"", 13, 13, "", 13, 13, "", 13, 13, 13, 13, "", 10, "", 13, "", 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, "", 13, "", 13, ""
+	db	"", 10, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_6_data
 _tileset_tile_6_data:
-	db	"", 13, 13, "", 13, 13, "", 13, 13, 13, 13, "", 10, "", 13, "", 13, "", 10, "", 13, 13, 13, 13, 13, "", 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, "", 13, "			"
+	db	"", 10, "", 10, "			"
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_7_data
 _tileset_tile_7_data:
-	db	"", 13, 13, "", 13, 13, "", 13, 13, 13, 13, "", 10, "", 13, "", 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, "", 13, "", 13, ""
+	db	"", 10, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_8_data
 _tileset_tile_8_data:
-	db	"	"
+	db	"	"
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_9_data
 _tileset_tile_9_data:
-	db	"	"
+	db	"	"
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_10_data
 _tileset_tile_10_data:
-	db	"", 13, "	", 10, "", 10, ""
+	db	"", 13, "	", 10, "", 10, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_11_data
 _tileset_tile_11_data:
-	db	"", 13, "	", 10, "", 10, ""
+	db	"", 13, "	", 10, "", 10, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_12_data
 _tileset_tile_12_data:
-	db	"	"
+	db	"	"
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_13_data
 _tileset_tile_13_data:
-	db	"	"
+	db	"	"
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_14_data
 _tileset_tile_14_data:
-	db	"", 10, ""
+	db	"", 10, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_15_data
 _tileset_tile_15_data:
-	db	""
+	db	""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_16_data
 _tileset_tile_16_data:
-	db	"", 13, 13, 13, "", 10, 13, 13, 13, 13, 13, 13, 13, "", 10, 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, "", 13, 13, 13, "", 13, "", 13, 13, 13, "", 13, 13, 13, "", 13, 13, "", 13, 13, 13, 13, 13, 13, 13, "", 13, 13, "", 13, 13, "", 13, 13, 13, 13, 13, 13, "", 10, 13, 13, 13, 13, 13, 13, ""
+	db	"", 10, "", 10, "", 10, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_17_data
 _tileset_tile_17_data:
-	db	"", 13, 13, "", 13, 13, 13, 13, 13, "", 10, 13, 13, 13, 13, 13, 13, 13, "", 10, 13, "", 13, 13, 13, 13, 13, 13, "", 13, 13, "", 13, 13, "", 13, "", 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, 13, 13, "", 13, 13, "", 13, 13, "", 13, 13, 13, 13, 13, 13, "", 10, 13, 13, 13, 13, 13, 13, ""
+	db	"", 10, "", 10, "", 10, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_18_data
 _tileset_tile_18_data:
-	db	"", 13, 13, 13, 13, "	", 13, 13, 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, 13, "", 13, 13, 13, "", 13, 13, "", 13, 13, 13, "", 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, "", 13, 13, "", 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, 13, 13, 13, ""
+	db	"	", 13, "", 13, "", 13, "", 13, "", 13, ""
 
 	section	.data,"aw",@progbits
 	public	_tileset_tile_19_data
 _tileset_tile_19_data:
-	db	"", 13, "", 13, 13, 13, 13, "", 10, 13, 13, 13, 13, 13, 13, "", 13, "", 13, 13, 13, 13, 13, 13, "", 13, 13, 13, 13, "", 13, 13, "", 13, 13, 13, 13, 13, 13, 13, 13, 13, "", 13, 13, 13, 13, 13, 13, "", 13, 13, "", 13, "", 13, 13, 13, 13, 13, 13, "	", 13, 13, 13, 13, 13, ""
+	db	"", 10, "	"
 
 	section	.data,"aw",@progbits
 	public	_tileset_tiles_data
@@ -2364,32 +2445,32 @@ _title_data:
 	section	.data,"aw",@progbits
 	public	_walls_tile_0_data
 _walls_tile_0_data:
-	db	"", 0, "", 0, "", 10, 0, "", 10, 0, "	", 0, "	", 0, "	", 0, "	", 0, "	"
+	db	"", 0, "", 0, "", 10, 0, "", 10, 0, "	", 0, "	", 0, "	", 0, "	", 0, "	"
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_1_data
 _walls_tile_1_data:
-	db	"																"
+	db	"																"
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_2_data
 _walls_tile_2_data:
-	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "", 0, "", 0, "	", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "", 0, "", 0, "	", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_3_data
 _walls_tile_3_data:
-	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_4_data
 _walls_tile_4_data:
-	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "", 0, "", 0, "	", 0, "", 0, "", 0, "", 0, "		"
+	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "", 0, "", 0, "	", 13, "", 13, 13, "", 0, "", 13, "", 0, "", 13, "", 13, "", 0, "", 13, "", 0, "", 13, "", 13, "	", 13, "	"
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_5_data
 _walls_tile_5_data:
-	db	"					", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+	db	"					", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_6_data
@@ -2399,27 +2480,27 @@ _walls_tile_6_data:
 	section	.data,"aw",@progbits
 	public	_walls_tile_7_data
 _walls_tile_7_data:
-	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "	", 0, "", 0, "", 0, "	"
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 13, 13, 0, "", 13, 13, "", 0, "", 13, 13, "", 0, "", 13, "", 13, 13, "", 0, "", 0, "", 13, "", 0, "	", 13, "", 0, "", 0, "", 0, "	"
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_8_data
 _walls_tile_8_data:
-	db	"								", 10, "", 10, ""
+	db	"				", 13, "	", 13, "	", 13, "	", 13, "", 13, "", 13, "	", 13, 13, 13, "", 10, "", 13, "", 10, ""
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_9_data
 _walls_tile_9_data:
-	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, ""
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 13, "", 13, 13, 13, "", 13, 13, 13, "", 13, 13, 13, 0, "", 13, 13, "", 0, "", 13, "", 0, "", 13, 13, "", 13, 13, 13, "", 0, ""
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_10_data
 _walls_tile_10_data:
-	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "		"
+	db	"", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 0, "", 13, "", 13, 13, "", 0, "", 13, "", 0, "", 13, "", 13, "", 0, "", 13, "", 0, "", 13, "", 13, "	", 13, "	"
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_11_data
 _walls_tile_11_data:
-	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	"
+	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	"
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_12_data
@@ -2429,17 +2510,17 @@ _walls_tile_12_data:
 	section	.data,"aw",@progbits
 	public	_walls_tile_13_data
 _walls_tile_13_data:
-	db	"", 10, "", 10, "					"
+	db	"", 10, "", 10, "					"
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_14_data
 _walls_tile_14_data:
-	db	"					", 0, "", 0, "", 0, "", 0, "", 0, "	", 0, "", 0, "", 0, "	"
+	db	"					", 13, 13, "", 13, 13, "", 0, "", 13, 13, "", 0, "", 13, "", 13, 13, "", 0, "", 0, "", 13, "", 0, "	", 13, "", 0, "", 0, "", 0, "	"
 
 	section	.data,"aw",@progbits
 	public	_walls_tile_15_data
 _walls_tile_15_data:
-	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "	", 0, "", 10, 0, "", 10, 0, ""
+	db	"", 0, "	", 0, "	", 0, "	", 0, "	", 0, "", 13, "	", 0, "", 13, 13, "	", 0, "", 13, 13, "	", 0, "", 13, 13, "	", 0, "", 13, "", 10, 0, "", 13, "", 10, 0, ""
 
 	section	.data,"aw",@progbits
 	public	_walls_tiles_data
@@ -2464,7 +2545,7 @@ _walls_tiles_data:
 	section	.data,"aw",@progbits
 	public	_default_palette
 _default_palette:
-	db	"|", 0, 0, "ÿÿèlêòŒ±¡", 0, 0, "ç0f¸JÅhJ‡ÐNWÖZf½÷µýšþrÿ"
+	db	"|", 0, 0, "ÿÿèlêòŒ±¡", 0, 0, "ç0f¸JÅhJ‡Ð´RNWÖZf½÷µýšþrÿ"
 
 	section	.bss,"aw",@nobits
 	public	_toExit
@@ -2501,6 +2582,7 @@ _map:
 	extern	__bdivu
 	extern	_gfx_RLETSprite
 	extern	__frameset
+	extern	__lsub
 	extern	_ti_Seek
 	extern	_gfx_SetDraw
 	extern	_gfx_FillScreen
@@ -2512,5 +2594,7 @@ _map:
 	extern	_ti_GetDataPtr
 	extern	_gfx_PrintStringXY
 	extern	_gfx_End
+	extern	__lcmpu
 	extern	_gfx_SetTextXY
+	extern	_clock
 	extern	__frameset0
