@@ -397,17 +397,12 @@ BB2_1:
 _drawTiles:
 	ld	hl, -6
 	call	__frameset
-	or	a, a
-	sbc	hl, hl
-	push	hl
 	call	_drawWalls
-	pop	hl
 	call	_drawEntities
-	ld	hl, 1
-	push	hl
-	call	_drawWalls
-	pop	hl
 	call	_drawErrorsAndTotals
+	ld	a, (_levelWinAnimFrame)
+	or	a, a
+	jr	nz, BB3_2
 	ld	hl, (_tileset_tiles_data)
 	ld	(ix - 3), hl
 	ld	a, (_cursorCol)
@@ -431,6 +426,10 @@ _drawTiles:
 	ld	hl, (ix - 3)
 	push	hl
 	call	_gfx_RLETSprite
+	pop	hl
+	pop	hl
+	pop	hl
+BB3_2:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -439,175 +438,148 @@ _drawTiles:
 	section	.text,"ax",@progbits
 	public	_drawWalls
 _drawWalls:
-	ld	hl, -21
+	ld	hl, -23
 	call	__frameset
 	ld	a, -1
-	or	a, a
-	sbc	hl, hl
-	ld	de, 9
-	push	hl
-	pop	bc
+	ld	iy, 0
 BB4_1:
-	push	bc
-	pop	hl
+	ld	de, 9
+	lea	hl, iy
 	or	a, a
 	sbc	hl, de
-	jp	z, BB4_26
+	jp	z, BB4_22
 	or	a, a
 	sbc	hl, hl
 	ld	l, a
-	ld	(ix - 15), hl
-	push	bc
-	pop	hl
-	ld	(ix - 3), bc
+	ld	(ix - 20), hl
+	lea	hl, iy
 	ld	c, 4
 	call	__ishl
-	ld	bc, (ix - 3)
 	ld	de, 88
 	add	hl, de
-	ld	(ix - 18), hl
-	ld	l, c
+	ld	(ix - 14), hl
+	ld	(ix - 3), iy
+	ex	de, hl
+	ld	e, iyl
+	ex	de, hl
 	dec	l
 	ld	de, 0
-	ld	(ix - 11), l
+	ld	(ix - 10), l
 	ld	e, l
-	ld	(ix - 21), de
+	ld	(ix - 23), de
 	ld	iyh, d
 	ld	hl, 86
 	ex	de, hl
 	ld	hl, _map
-	ld	(ix - 6), hl
+	ld	(ix - 9), hl
 	ex	de, hl
 BB4_3:
-	ld	(ix - 10), hl
+	ld	(ix - 6), hl
 	ld	de, 230
 	or	a, a
 	sbc	hl, de
-	jp	z, BB4_25
-	ld	(ix - 12), a
-	push	af
-	ld	a, iyh
-	ld	(ix - 7), a
-	pop	af
-	dec	iyh
-	ld	a, iyh
-	or	a, (ix - 11)
+	jp	z, BB4_21
+	ld	(ix - 11), a
+	ld	e, iyh
+	dec	e
+	ld	a, e
+	or	a, (ix - 10)
 	cp	a, 8
 	ld	a, 1
 	jr	nc, BB4_6
 	or	a, a
 	sbc	hl, hl
-	ex	de, hl
-	ld	e, iyh
-	ex	de, hl
+	ld	l, e
 	ld	c, 3
 	call	__ishl
-	push	hl
-	pop	bc
+	ld	(ix - 17), hl
 	ld	hl, _map
+	ld	bc, (ix - 17)
 	add	hl, bc
-	ld	bc, (ix - 3)
-	ld	de, (ix - 21)
-	add	hl, de
+	ld	bc, (ix - 23)
+	add	hl, bc
 	ld	a, (hl)
 BB4_6:
 	and	a, 7
-	ld	d, a
-	ld	a, iyh
-	or	a, c
+	ld	iyl, a
+	ld	a, e
+	ld	hl, (ix - 3)
+	or	a, l
 	cp	a, 8
 	ld	a, 1
 	jr	nc, BB4_8
 	or	a, a
 	sbc	hl, hl
-	ex	de, hl
-	ld	e, iyh
-	ex	de, hl
+	ld	l, e
 	ld	c, 3
 	call	__ishl
 	push	hl
-	pop	bc
+	pop	de
 	ld	hl, _map
-	add	hl, bc
-	ld	bc, (ix - 3)
-	add	hl, bc
+	add	hl, de
+	ld	de, (ix - 3)
+	add	hl, de
 	ld	a, (hl)
 BB4_8:
 	and	a, 7
 	cp	a, 1
-	ld	l, 2
+	ld	hl, 2
 	jr	z, BB4_10
-	ld	l, 0
+	or	a, a
+	sbc	hl, hl
 BB4_10:
-	ld	a, d
+	ld	a, iyl
 	cp	a, 1
-	ld	e, 1
-	ld	d, (ix - 7)
+	ld	de, 1
 	jr	z, BB4_12
-	ld	e, 0
+	ld	de, 0
 BB4_12:
-	ld	a, l
-	add	a, e
-	ld	l, a
-	ld	a, (ix - 11)
-	or	a, d
+	add	hl, de
+	ld	a, (ix - 10)
+	or	a, iyh
 	cp	a, 8
 	ld	a, 1
 	jr	nc, BB4_14
-	ld	iy, (ix - 6)
-	ld	de, (ix - 15)
+	ld	c, iyh
+	ld	iy, (ix - 9)
+	ld	de, (ix - 20)
 	add	iy, de
 	ld	a, (iy)
-	ld	d, (ix - 7)
+	ld	iyh, c
 BB4_14:
 	and	a, 7
 	cp	a, 1
-	ld	e, 4
+	ld	de, 4
 	jr	z, BB4_16
-	ld	e, 0
+	ld	de, 0
 BB4_16:
-	ld	a, l
-	add	a, e
-	ld	l, a
-	ld	a, d
-	or	a, c
+	add	hl, de
+	push	af
+	ld	a, iyh
+	ld	(ix - 17), a
+	pop	af
+	ld	a, iyh
+	ld	de, (ix - 3)
+	or	a, e
 	cp	a, 8
 	ld	a, 1
 	jr	nc, BB4_18
-	ld	iy, (ix - 6)
-	add	iy, bc
+	ld	iy, (ix - 9)
+	add	iy, de
 	ld	a, (iy)
-	ld	d, (ix - 7)
 BB4_18:
 	and	a, 7
 	cp	a, 1
-	ld	e, 8
+	ld	de, 8
 	jr	z, BB4_20
-	ld	e, 0
+	ld	de, 0
 BB4_20:
-	ld	a, l
-	add	a, e
-	ld	e, a
-	and	a, 12
-	ld	hl, (ix + 6)
-	ld	bc, 1
-	or	a, a
-	sbc	hl, bc
-	jr	nz, BB4_22
-	or	a, a
-	jr	nz, BB4_23
-	jr	BB4_24
-BB4_22:
-	or	a, a
-	jr	nz, BB4_24
-BB4_23:
+	add	hl, de
+	ex	de, hl
+	ld	iy, _tileIds
+	add	iy, de
 	or	a, a
 	sbc	hl, hl
-	push	hl
-	pop	bc
-	ld	c, e
-	ld	iy, _tileIds
-	add	iy, bc
 	ld	l, (iy)
 	ld	bc, 3
 	call	__imulu
@@ -616,34 +588,34 @@ BB4_23:
 	ld	hl, _walls_tiles_data
 	add	hl, de
 	ld	hl, (hl)
-	ld	de, (ix - 10)
+	ld	de, (ix - 6)
 	push	de
-	ld	de, (ix - 18)
+	ld	de, (ix - 14)
 	push	de
 	push	hl
 	call	_gfx_RLETSprite
-	ld	d, (ix - 7)
 	pop	hl
 	pop	hl
 	pop	hl
-BB4_24:
-	ld	iy, (ix - 6)
+	ld	hl, (ix - 6)
+	ld	iy, (ix - 9)
 	lea	iy, iy + 8
-	ld	(ix - 6), iy
-	ld	iyh, d
+	ld	(ix - 9), iy
 	ld	de, 16
-	ld	hl, (ix - 10)
 	add	hl, de
+	push	af
+	ld	a, (ix - 17)
+	ld	iyh, a
+	pop	af
 	inc	iyh
-	ld	a, (ix - 12)
-	ld	bc, (ix - 3)
+	ld	a, (ix - 11)
 	jp	BB4_3
-BB4_25:
-	inc	bc
+BB4_21:
+	ld	iy, (ix - 3)
+	inc	iy
 	inc	a
-	ld	de, 9
 	jp	BB4_1
-BB4_26:
+BB4_22:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -748,21 +720,23 @@ BB5_11:
 	section	.text,"ax",@progbits
 	public	_drawErrorsAndTotals
 _drawErrorsAndTotals:
-	ld	hl, -13
+	ld	hl, -17
 	call	__frameset
 	ld	a, 1
 	ld	bc, 0
+	ld	de, _map
+	ld	(ix - 16), de
 	ld	de, 8
-	push	bc
-	pop	iy
+	ld	(ix - 17), a
 	ld	(ix - 10), a
 BB6_1:
-	lea	hl, iy
+	push	bc
+	pop	hl
 	or	a, a
 	sbc	hl, de
 	jr	z, BB6_8
-	ld	(ix - 3), iy
-	push	iy
+	push	bc
+	ld	(ix - 3), bc
 	call	_wallsInCol
 	ld	c, a
 	pop	de
@@ -771,10 +745,13 @@ BB6_1:
 	add	hl, de
 	ld	a, (hl)
 	cp	a, c
-	ex	de, hl
+	ld	bc, (ix - 3)
 	jr	nc, BB6_7
+	push	bc
+	pop	hl
 	ld	c, 4
 	call	__ishl
+	ld	bc, (ix - 3)
 	ld	de, 96
 	add	hl, de
 	ld	(ix - 6), hl
@@ -793,6 +770,7 @@ BB6_4:
 	ld	(ix - 9), iy
 	call	_gfx_RLETSprite
 	ld	iy, (ix - 9)
+	ld	bc, (ix - 3)
 	pop	hl
 	pop	hl
 	pop	hl
@@ -802,24 +780,20 @@ BB6_4:
 BB6_6:
 	xor	a, a
 	ld	(ix - 10), a
-	ld	hl, (ix - 3)
 BB6_7:
-	inc	hl
-	ld	bc, 0
-	push	hl
-	pop	iy
+	inc	bc
 	ld	de, 8
 	jr	BB6_1
 BB6_8:
-	push	bc
-	pop	iy
+	ld	bc, 0
 BB6_9:
-	lea	hl, iy
+	push	bc
+	pop	hl
 	or	a, a
 	sbc	hl, de
 	jr	z, BB6_16
-	ld	(ix - 3), iy
-	push	iy
+	push	bc
+	ld	(ix - 3), bc
 	call	_wallsInRow
 	ld	c, a
 	pop	de
@@ -828,10 +802,13 @@ BB6_9:
 	add	hl, de
 	ld	a, (hl)
 	cp	a, c
-	ex	de, hl
+	ld	bc, (ix - 3)
 	jr	nc, BB6_15
+	push	bc
+	pop	hl
 	ld	c, 4
 	call	__ishl
+	ld	bc, (ix - 3)
 	ld	de, 94
 	add	hl, de
 	ld	(ix - 6), hl
@@ -850,6 +827,7 @@ BB6_12:
 	ld	(ix - 9), iy
 	call	_gfx_RLETSprite
 	ld	iy, (ix - 9)
+	ld	bc, (ix - 3)
 	pop	hl
 	pop	hl
 	pop	hl
@@ -859,20 +837,17 @@ BB6_12:
 BB6_14:
 	xor	a, a
 	ld	(ix - 10), a
-	ld	hl, (ix - 3)
 BB6_15:
-	inc	hl
-	ld	bc, 0
-	push	hl
-	pop	iy
+	inc	bc
 	ld	de, 8
 	jr	BB6_9
 BB6_16:
 	xor	a, a
-	ld	iyl, a
+	ld	c, a
 	ld	hl, 96
 	ld	(ix - 9), hl
-	ld	(ix - 6), bc
+	sbc	hl, hl
+	ld	(ix - 6), hl
 	inc	a
 	ld	(ix - 3), a
 BB6_17:
@@ -880,8 +855,8 @@ BB6_17:
 	or	a, a
 	sbc	hl, de
 	jr	z, BB6_23
-	ld	(ix - 13), iy
-	push	iy
+	ld	(ix - 13), bc
+	push	bc
 	call	_wallsInCol
 	pop	hl
 	ld	hl, (_colTargets)
@@ -931,29 +906,28 @@ BB6_22:
 	ld	hl, (ix - 9)
 	add	hl, de
 	ld	(ix - 9), hl
-	ld	iy, (ix - 13)
-	inc	iyl
-	ld	bc, 0
+	ld	bc, (ix - 13)
+	inc	c
 	ld	de, 8
 	jr	BB6_17
 BB6_23:
 	xor	a, a
-	ld	iyl, a
+	ld	c, a
 	ld	hl, 94
+	ld	(ix - 9), hl
+	sbc	hl, hl
 	ld	(ix - 6), hl
 BB6_24:
-	push	bc
-	pop	hl
+	ld	hl, (ix - 6)
 	or	a, a
 	sbc	hl, de
 	jr	z, BB6_30
-	ld	(ix - 13), iy
-	push	iy
-	ld	(ix - 9), bc
+	ld	(ix - 13), bc
+	push	bc
 	call	_wallsInRow
 	pop	hl
 	ld	hl, (_rowTargets)
-	ld	de, (ix - 9)
+	ld	de, (ix - 6)
 	add	hl, de
 	ld	c, (hl)
 	cp	a, c
@@ -983,7 +957,7 @@ BB6_29:
 	ld	hl, _digits_tiles_data
 	add	hl, de
 	ld	hl, (hl)
-	ld	de, (ix - 6)
+	ld	de, (ix - 9)
 	push	de
 	ld	de, 76
 	push	de
@@ -992,34 +966,73 @@ BB6_29:
 	pop	hl
 	pop	hl
 	pop	hl
-	ld	bc, (ix - 9)
-	inc	bc
-	ld	de, 16
 	ld	hl, (ix - 6)
-	add	hl, de
+	inc	hl
 	ld	(ix - 6), hl
-	ld	iy, (ix - 13)
-	inc	iyl
+	ld	de, 16
+	ld	hl, (ix - 9)
+	add	hl, de
+	ld	(ix - 9), hl
+	ld	bc, (ix - 13)
+	inc	c
 	ld	de, 8
 	jr	BB6_24
 BB6_30:
 	ld	a, (ix - 10)
 	and	a, 1
 	bit	0, (ix - 3)
-	jr	z, BB6_39
+	jp	z, BB6_45
 	bit	0, a
-	jr	z, BB6_39
+	jp	z, BB6_45
 	ld	a, (_levelWinAnimFrame)
 	or	a, a
-	jr	nz, BB6_34
+	jr	nz, BB6_41
 	ld	a, 1
 	ld	(_levelWinAnimFrame), a
 	call	_clock
 	ld	a, e
 	ld	(_lastWinAnimFrame), hl
 	ld	(_lastWinAnimFrame+3), a
-	jr	BB6_39
+	ld	bc, 0
 BB6_34:
+	push	bc
+	pop	hl
+	ld	de, 8
+	or	a, a
+	sbc	hl, de
+	jp	z, BB6_45
+	ld	(ix - 3), bc
+	ld	bc, 0
+BB6_36:
+	push	bc
+	pop	hl
+	ld	de, 8
+	or	a, a
+	sbc	hl, de
+	jr	z, BB6_40
+	ld	iy, (ix - 16)
+	add	iy, bc
+	ld	l, (iy)
+	ld	a, l
+	and	a, 7
+	cp	a, 2
+	jr	nz, BB6_39
+	ld	a, l
+	and	a, -8
+	ld	iy, (ix - 16)
+	add	iy, bc
+	ld	(iy), a
+BB6_39:
+	inc	bc
+	jr	BB6_36
+BB6_40:
+	ld	bc, (ix - 3)
+	inc	bc
+	ld	iy, (ix - 16)
+	lea	iy, iy + 8
+	ld	(ix - 16), iy
+	jr	BB6_34
+BB6_41:
 	call	_clock
 	ld	bc, (_lastWinAnimFrame)
 	ld	a, (_lastWinAnimFrame+3)
@@ -1030,21 +1043,22 @@ BB6_34:
 	ld	hl, 10000
 	ld	e, 0
 	call	__lcmpu
-	jr	nc, BB6_39
+	jr	nc, BB6_45
 	call	_clock
 	ld	a, e
 	ld	(_lastWinAnimFrame), hl
 	ld	(_lastWinAnimFrame+3), a
 	ld	a, (_levelWinAnimFrame)
+	ld	l, a
 	cp	a, 3
-	jr	nc, BB6_37
-	inc	a
-	jr	BB6_38
-BB6_37:
-	dec	a
-BB6_38:
+	jr	c, BB6_44
+	ld	a, -1
+	ld	(ix - 17), a
+BB6_44:
+	ld	a, (ix - 17)
+	add	a, l
 	ld	(_levelWinAnimFrame), a
-BB6_39:
+BB6_45:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -1053,7 +1067,7 @@ BB6_39:
 	section	.text,"ax",@progbits
 	public	_doInput
 _doInput:
-	ld	hl, -8
+	ld	hl, -6
 	call	__frameset
 	call	_os_GetCSC
 	ld	iyl, a
@@ -1063,9 +1077,9 @@ _doInput:
 	pop	hl
 	or	a, a
 	sbc	hl, de
-	jp	nc, BB7_59
+	jp	nc, BB7_49
+	ld	de, 3
 	ld	iyh, 1
-	ld	de, 6
 	ld	hl, JTI7_0
 	add	hl, bc
 	add	hl, bc
@@ -1073,12 +1087,12 @@ _doInput:
 	ld	hl, (hl)
 	jp	(hl)
 BB7_2:
-	push	de
-	pop	bc
 	ld	a, iyl
 	add	a, -15
 	cp	a, 22
-	jp	nc, BB7_59
+	jp	nc, BB7_49
+	push	de
+	pop	bc
 	ld	de, 0
 	ld	e, a
 	ld	hl, JTI7_1
@@ -1089,71 +1103,44 @@ BB7_2:
 	jp	(hl)
 BB7_4:
 	ld	hl, 2
-	jp	BB7_56
+	jp	BB7_46
 BB7_5:
 	ld	a, iyl
 	dec	a
 	cp	a, 4
-	jp	c, BB7_15
+	jr	c, BB7_15
 	ld	a, iyl
 	cp	a, 15
 	ld	hl, 0
 	jp	nz, BB7_22
 	ld	a, (_numLevelPacks)
 	cp	a, 2
-	jp	nc, BB7_21
+	jr	nc, BB7_14
 BB7_8:
 	ld	a, iyh
 	ld	(_toExit), a
-	jp	BB7_59
+	jp	BB7_49
 BB7_9:
 	ld	a, iyl
 	cp	a, 15
 	jr	z, BB7_11
 	ld	a, iyl
 	cp	a, 54
-	jp	nz, BB7_59
+	jp	nz, BB7_49
 BB7_11:
 	or	a, a
 	sbc	hl, hl
-	jp	BB7_21
+	jr	BB7_14
 BB7_12:
-	push	af
 	ld	a, iyl
-	ld	(ix - 1), a
-	pop	af
-	ld	iy, _map
-	ld	a, (_cursorRow)
-	or	a, a
-	sbc	hl, hl
-	ld	l, a
-	ld	a, (_cursorCol)
-	ld	de, 0
-	ld	(ix - 5), a
-	ld	e, a
-	ld	c, 3
-	ld	(ix - 4), hl
-	call	__ishl
-	push	hl
-	pop	bc
-	add	iy, bc
-	add	iy, de
-	ld	l, (iy)
-	ld	a, l
-	and	a, 7
-	ld	c, a
-	add	a, -3
-	cp	a, 2
-	jr	nc, BB7_18
-	ld	l, (ix - 1)
-	ld	a, l
-	dec	a
-	cp	a, 4
-	jp	c, BB7_24
-	ld	a, l
 	cp	a, 15
-	jr	z, BB7_20
-	jp	BB7_59
+	jr	nz, BB7_18
+	call	_saveLevel
+	ld	hl, 2
+BB7_14:
+	push	hl
+	call	_setView
+	jp	BB7_48
 BB7_15:
 	ld	bc, 0
 	push	bc
@@ -1177,30 +1164,57 @@ BB7_16:
 	lea	hl, iy
 	or	a, a
 	sbc	hl, bc
-	jp	nc, BB7_59
+	jp	nc, BB7_49
 	ld	a, iyl
-	jp	BB7_34
+	jp	BB7_30
 BB7_18:
-	ld	(ix - 8), iy
-	ld	e, (ix - 1)
-	ld	a, e
-	dec	a
-	cp	a, 4
-	jr	c, BB7_25
-	ld	a, e
-	cp	a, 15
-	jp	nz, BB7_37
-BB7_20:
-	call	_saveLevel
-	ld	hl, 2
-BB7_21:
+	ld	a, (_levelWinAnimFrame)
+	or	a, a
+	jp	nz, BB7_49
+	ld	a, (_cursorRow)
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+	ld	a, (_cursorCol)
+	ld	iyh, a
+	ld	de, 0
+	ld	e, iyh
+	ld	c, 3
+	ld	(ix - 3), hl
+	call	__ishl
 	push	hl
-	call	_setView
-	jp	BB7_58
+	pop	bc
+	ld	hl, _map
+	add	hl, bc
+	add	hl, de
+	push	hl
+	pop	de
+	ld	l, (hl)
+	ld	a, l
+	and	a, 7
+	ld	c, a
+	add	a, -3
+	cp	a, 2
+	jr	nc, BB7_31
+	dec	iyl
+	ld	a, iyl
+	cp	a, 4
+	jp	nc, BB7_49
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	pop	bc
+	ld	c, iyl
+	ld	hl, JTI7_4
+	add	hl, bc
+	add	hl, bc
+	add	hl, bc
+	ld	hl, (hl)
+	jp	(hl)
 BB7_22:
 	ld	a, iyl
 	cp	a, 54
-	jp	nz, BB7_59
+	jp	nz, BB7_49
 	ld	a, (_levelIndex)
 	ld	l, a
 	push	hl
@@ -1212,20 +1226,60 @@ BB7_22:
 	ld	(_cursorRow), a
 	ld	(_cursorCol), a
 	call	_drawView
-	jp	BB7_59
+	jp	BB7_49
 BB7_24:
+	ld	a, (_levelIndex)
+	ld	l, a
 	or	a, a
-	sbc	hl, hl
-	push	hl
-	pop	bc
-	ld	c, a
-	ld	hl, JTI7_4
-	add	hl, bc
-	add	hl, bc
-	add	hl, bc
-	ld	hl, (hl)
-	jp	(hl)
-BB7_25:
+	jp	z, BB7_49
+	dec	l
+	ld	a, l
+	jr	BB7_30
+BB7_26:
+	ld	a, (_levelIndex)
+	push	bc
+	pop	hl
+	ld	l, a
+	inc	hl
+	ld	iy, (_packNumLevels)
+	ld	c, (iy)
+	or	a, a
+	sbc	hl, bc
+	jp	nc, BB7_49
+	inc	a
+	jr	BB7_30
+BB7_28:
+	ld	a, (_levelIndex)
+	cp	a, 6
+	jr	c, BB7_49
+	add	a, -6
+BB7_30:
+	ld	(_levelIndex), a
+	jr	BB7_49
+BB7_31:
+	ld	(ix - 6), de
+	ld	a, iyl
+	dec	a
+	cp	a, 4
+	jr	c, BB7_36
+	ld	a, iyl
+	cp	a, 48
+	jr	nz, BB7_52
+	ld	a, c
+	cp	a, 2
+	ld	e, 0
+	jr	z, BB7_35
+	ld	e, 2
+BB7_35:
+	ld	a, l
+	and	a, -8
+	ld	l, a
+	ld	a, e
+	add	a, l
+	ld	hl, (ix - 6)
+	ld	(hl), a
+	jr	BB7_49
+BB7_36:
 	or	a, a
 	sbc	hl, hl
 	push	hl
@@ -1237,129 +1291,81 @@ BB7_25:
 	add	hl, bc
 	ld	hl, (hl)
 	jp	(hl)
-BB7_26:
-	ld	hl, (ix - 4)
-	ld	a, l
-	cp	a, 7
-	jp	nc, BB7_59
-	ld	hl, (ix - 4)
-	inc	l
-	jr	BB7_46
-BB7_28:
-	ld	a, (_levelIndex)
-	ld	l, a
-	or	a, a
-	jp	z, BB7_59
-	dec	l
-	ld	a, l
-	jr	BB7_34
-BB7_30:
-	ld	a, (_levelIndex)
-	push	bc
-	pop	hl
-	ld	l, a
-	inc	hl
-	ld	iy, (_packNumLevels)
-	ld	c, (iy)
-	or	a, a
-	sbc	hl, bc
-	jp	nc, BB7_59
-	inc	a
-	jr	BB7_34
-BB7_32:
-	ld	a, (_levelIndex)
-	cp	a, 6
-	jp	c, BB7_59
-	add	a, -6
-BB7_34:
-	ld	(_levelIndex), a
-	jr	BB7_59
-BB7_35:
-	ld	a, (ix - 5)
-	cp	a, 7
-	jr	nc, BB7_59
-	inc	a
-	jr	BB7_43
 BB7_37:
-	ld	a, e
-	cp	a, 48
-	jr	nz, BB7_47
-	ld	a, c
-	cp	a, 2
-	ld	e, 0
-	jr	z, BB7_40
-	ld	e, 2
-BB7_40:
+	ld	hl, (ix - 3)
 	ld	a, l
-	and	a, -8
-	ld	l, a
-	ld	a, e
-	add	a, l
-	ld	hl, (ix - 8)
-	ld	(hl), a
-	jr	BB7_59
-BB7_41:
-	ld	l, (ix - 5)
-	ld	a, l
-	or	a, a
-	jr	z, BB7_59
-	dec	l
-	ld	a, l
-BB7_43:
-	ld	(_cursorCol), a
-	jr	BB7_59
-BB7_44:
-	ld	hl, (ix - 4)
-	ld	a, l
-	or	a, a
-	jr	z, BB7_59
-	ld	hl, (ix - 4)
-	dec	l
-BB7_46:
-	ld	a, l
-	ld	(_cursorRow), a
-	jr	BB7_59
-BB7_47:
-	ld	a, e
-	cp	a, 54
-	jr	nz, BB7_59
-	ld	a, c
-	cp	a, 1
-	ld	iy, (ix - 8)
-	jr	nz, BB7_61
-	ld	e, 0
-	jr	BB7_62
-BB7_50:
+	cp	a, 7
+	jr	nc, BB7_49
+	ld	hl, (ix - 3)
+	inc	l
+	jr	BB7_60
+BB7_39:
 	ld	hl, 5
-	jr	BB7_56
-BB7_51:
+	jr	BB7_46
+BB7_40:
 	ld	hl, 1
-	jr	BB7_56
-BB7_52:
+	jr	BB7_46
+BB7_41:
 	ld	hl, 4
-	jr	BB7_56
-BB7_53:
+	jr	BB7_46
+BB7_42:
 	ld	hl, 7
-	jr	BB7_56
-BB7_54:
+	jr	BB7_46
+BB7_43:
 	or	a, a
 	sbc	hl, hl
-	jr	BB7_56
-BB7_55:
-	ld	hl, 3
-BB7_56:
+	jr	BB7_46
+BB7_44:
+	push	bc
+	jr	BB7_47
+BB7_45:
+	ld	hl, 6
+BB7_46:
 	push	hl
-BB7_57:
+BB7_47:
 	call	_loadLevelPack
-BB7_58:
+BB7_48:
 	pop	hl
-BB7_59:
+BB7_49:
 	ld	sp, ix
 	pop	ix
 	ret
-BB7_60:
-	push	bc
+BB7_50:
+	ld	a, iyh
+	cp	a, 7
+	jr	nc, BB7_49
+	inc	iyh
 	jr	BB7_57
+BB7_52:
+	ld	a, iyl
+	cp	a, 54
+	jr	nz, BB7_49
+	ld	a, c
+	cp	a, 1
+	ld	iy, (ix - 6)
+	jr	nz, BB7_61
+	ld	e, 0
+	jr	BB7_62
+BB7_55:
+	ld	a, iyh
+	or	a, a
+	jr	z, BB7_49
+	dec	iyh
+BB7_57:
+	ld	a, iyh
+	ld	(_cursorCol), a
+	jr	BB7_49
+BB7_58:
+	ld	hl, (ix - 3)
+	ld	a, l
+	or	a, a
+	jr	z, BB7_49
+	ld	hl, (ix - 3)
+	dec	l
+BB7_60:
+	ld	a, l
+	ld	(_cursorRow), a
+	jr	BB7_49
 BB7_61:
 	ld	e, 1
 BB7_62:
@@ -1367,7 +1373,7 @@ BB7_62:
 	and	a, -8
 	add	a, e
 	ld	(iy), a
-	jr	BB7_59
+	jr	BB7_49
 	section	.text,"ax",@progbits
 	section	.rodata,"a",@progbits
 	private	JTI7_0
@@ -1379,45 +1385,45 @@ JTI7_0:
 	private	JTI7_1
 JTI7_1:
 	dl	BB7_8
-	dl	BB7_59
-	dl	BB7_59
+	dl	BB7_49
+	dl	BB7_49
 	dl	BB7_4
-	dl	BB7_50
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_51
-	dl	BB7_52
-	dl	BB7_53
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_59
-	dl	BB7_54
-	dl	BB7_55
-	dl	BB7_60
+	dl	BB7_39
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_40
+	dl	BB7_41
+	dl	BB7_42
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_49
+	dl	BB7_43
+	dl	BB7_44
+	dl	BB7_45
 	private	JTI7_2
 JTI7_2:
 	dl	BB7_16
+	dl	BB7_24
+	dl	BB7_26
 	dl	BB7_28
-	dl	BB7_30
-	dl	BB7_32
 	private	JTI7_3
 JTI7_3:
-	dl	BB7_26
-	dl	BB7_41
-	dl	BB7_35
-	dl	BB7_44
+	dl	BB7_37
+	dl	BB7_55
+	dl	BB7_50
+	dl	BB7_58
 	private	JTI7_4
 JTI7_4:
-	dl	BB7_26
-	dl	BB7_41
-	dl	BB7_35
-	dl	BB7_44
+	dl	BB7_37
+	dl	BB7_55
+	dl	BB7_50
+	dl	BB7_58
 
 	section	.text,"ax",@progbits
 	public	_setView
@@ -2132,6 +2138,11 @@ _cursorCol:
 	rb	1
 
 	section	.bss,"aw",@nobits
+	public	_levelWinAnimFrame
+_levelWinAnimFrame:
+	rb	1
+
+	section	.bss,"aw",@nobits
 	public	_levelIndex
 _levelIndex:
 	rb	1
@@ -2195,11 +2206,6 @@ _colTargets:
 	public	_rowTargets
 _rowTargets:
 	rb	3
-
-	section	.bss,"aw",@nobits
-	public	_levelWinAnimFrame
-_levelWinAnimFrame:
-	rb	1
 
 	section	.data,"aw",@progbits
 	public	_digits_tile_0_data

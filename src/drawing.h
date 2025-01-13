@@ -45,16 +45,11 @@
 
 void drawView();
 
-typedef enum {
-    SIDE_BACK,
-    SIDE_FRONT
-} side_t;
-
 extern uint8_t levelWinAnimFrame;
 
 void drawTiles();
 void drawEntities();
-void drawWalls(side_t side);
+void drawWalls();
 void drawErrorsAndTotals();
 
 void printCentered(char *str, uint8_t y);

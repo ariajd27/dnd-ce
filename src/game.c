@@ -38,6 +38,14 @@ void doInput() {
             break;
 
         case VIEW_GAME:
+            if (key == sk_Clear) {
+                saveLevel();
+                setView(VIEW_LEVELS);
+                break;
+            }
+
+            if (levelWinAnimFrame > 0) break;
+
             if (map[cursorRow][cursorCol].contents != ENTITY_MONSTER && map[cursorRow][cursorCol].contents != ENTITY_CHEST) {
                 if (key == sk_2nd) {
                     map[cursorRow][cursorCol].contents = map[cursorRow][cursorCol].contents == ENTITY_WALL ? ENTITY_NONE : ENTITY_WALL;
@@ -59,12 +67,6 @@ void doInput() {
             if (key == sk_Down && cursorRow < MAP_HEIGHT - 1) {
                 cursorRow++;
             }
-
-            if (key == sk_Clear) {
-                saveLevel();
-                setView(VIEW_LEVELS);
-            }
-
             break;
         
         case VIEW_LEVELS:

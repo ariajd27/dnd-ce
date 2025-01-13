@@ -98,11 +98,10 @@ void drawView() {
 }
 
 void drawTiles() {
-    drawWalls(SIDE_BACK);
+    drawWalls();
     drawEntities();
-    drawWalls(SIDE_FRONT);
     drawErrorsAndTotals();
-    gfx_RLETSprite(TILE_CURSOR, MAP_X + cursorCol * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + cursorRow * TILE_HEIGHT + TILE_HEIGHT / 2);
+    if (levelWinAnimFrame == 0) gfx_RLETSprite(TILE_CURSOR, MAP_X + cursorCol * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + cursorRow * TILE_HEIGHT + TILE_HEIGHT / 2);
 }
 
 void drawEntities()
@@ -131,20 +130,13 @@ void drawEntities()
     }
 }
 
-void drawWalls(side_t side) {
+void drawWalls() {
     for (uint8_t col = 0; col <= MAP_WIDTH; col++) {
         for (uint8_t row = 0; row <= MAP_HEIGHT; row++) {
             uint8_t tileNeighbors = getCell(row - 1, col - 1).contents == ENTITY_WALL ? 1 : 0;
             tileNeighbors += 2 * (getCell(row - 1, col).contents == ENTITY_WALL ? 1 : 0);
             tileNeighbors += 4 * (getCell(row, col - 1).contents == ENTITY_WALL ? 1 : 0);
             tileNeighbors += 8 * (getCell(row, col).contents == ENTITY_WALL ? 1 : 0);
-
-            if (side == SIDE_FRONT) {
-                if (!(tileNeighbors & 0x0c)) continue;
-            }
-            else {
-                if (tileNeighbors & 0x0c) continue;
-            }
 
             const uint8_t tileId = getTileIndexFromNeighbors(tileNeighbors);
             gfx_RLETSprite(walls_tiles[tileId], MAP_X + col * TILE_WIDTH, MAP_Y + row * TILE_HEIGHT);
@@ -195,6 +187,14 @@ void drawErrorsAndTotals()
         if (levelWinAnimFrame == 0) {
             levelWinAnimFrame++;
             lastWinAnimFrame = clock();
+
+            for (uint8_t row = 0; row < MAP_HEIGHT; row++)
+            {
+                for (uint8_t col = 0; col < MAP_WIDTH; col++)
+                {
+                    if (map[row][col].contents == ENTITY_FLAG) map[row][col].contents = ENTITY_NONE;
+                }
+            }
         }
         else if (clock() - lastWinAnimFrame > WIN_ANIM_FRAME_TIME)
         {
