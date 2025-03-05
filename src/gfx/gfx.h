@@ -7,6 +7,7 @@ extern "C" {
 
 #include "default_palette.h"
 #define rlet_palette_offset 0
+#include "scroll.h"
 #include "title.h"
 #include "digits.h"
 #include "tileset.h"

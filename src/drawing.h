@@ -8,6 +8,8 @@
 #define COLOR_YELLOW 4
 #define COLOR_LIGHT_GREY 5
 #define COLOR_DARK_GREY 6
+#define COLOR_LIGHT_BROWN 8
+#define COLOR_DARK_BROWN 7
 
 #define BG_X 40
 #define BG_WIDTH 240

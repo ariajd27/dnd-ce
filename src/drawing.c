@@ -209,8 +209,28 @@ void drawErrorsAndTotals()
     }
 }
 
-void printCentered(char *str, uint8_t y) {
-    uint8_t length;
-    for (length = 0; str[length] != 0x00; length++);
-    gfx_PrintStringXY(str, (GFX_LCD_WIDTH / 2) - (4 * length) + 4, y);
+void printCentered(char *str, uint8_t y)
+{
+    uint8_t length = 0;
+    for (char *ptr = str; *ptr != 0x00; ptr++)
+    {
+        const uint8_t dl = *ptr == ' ' ? 3 : 8;
+        length += dl;
+    }
+
+    const uint24_t x0 = (GFX_LCD_WIDTH - (uint24_t) length) / 2;
+    const uint24_t x1 = (GFX_LCD_WIDTH + (uint24_t) length) / 2;
+
+    // draw scroll background
+    gfx_SetColor(COLOR_DARK_BROWN);
+    gfx_HorizLine_NoClip(x0 - 3, y - 3, length + 6);
+    gfx_HorizLine_NoClip(x0 - 3, y + 9, length + 6);
+    gfx_SetColor(COLOR_LIGHT_BROWN);
+    gfx_FillRectangle_NoClip(x0 - 2, y - 2, length, 11);
+    gfx_RLETSprite_NoClip(scroll, x0 - (scroll_width + 2), y - (scroll_height - 8)/2 - 1);
+    gfx_RLETSprite_NoClip(scroll, x1 - 2, y - (scroll_height - 8)/2 - 1);
+
+    // text
+    gfx_SetColor(COLOR_BLACK);
+    gfx_PrintStringXY(str, x0, y);
 }

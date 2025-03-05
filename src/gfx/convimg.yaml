@@ -8,6 +8,8 @@ palettes:
       - color: {index: 4, hex: "#e3c054"} # yellow
       - color: {index: 5, hex: "#6a6565", exact: true} # light grey
       - color: {index: 6, hex: "#484444", exact: true} # dark grey
+      - color: {index: 7, hex: "#6f452a", exact: true} # dark brown
+      - color: {index: 8, hex: "#d4ae81", exact: true} # light brown
     images: automatic
 
 converts:
@@ -15,7 +17,7 @@ converts:
     style: rlet
     palette: default_palette
     images:
-      - img/title.png
+      - img/*
     tilesets:
       tile-width: 16
       tile-height: 16

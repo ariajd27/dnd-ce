@@ -1,5 +1,7 @@
 default_palette.h
 default_palette.c
+scroll.h
+scroll.c
 title.h
 title.c
 digits.h
