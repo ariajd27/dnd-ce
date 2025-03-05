@@ -101,7 +101,11 @@ void drawTiles() {
     drawWalls();
     drawEntities();
     drawErrorsAndTotals();
-    if (levelWinAnimFrame == 0) gfx_RLETSprite(TILE_CURSOR, MAP_X + cursorCol * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + cursorRow * TILE_HEIGHT + TILE_HEIGHT / 2);
+
+    // no cursor if win animation playing (to tell user interaction is not permitted)
+    if (levelWinAnimFrame != 0) return;
+    
+    gfx_RLETSprite(TILE_CURSOR, MAP_X + cursorCol * TILE_WIDTH + TILE_WIDTH / 2, MAP_Y + cursorRow * TILE_HEIGHT + TILE_HEIGHT / 2 + 1);
 }
 
 void drawEntities()
