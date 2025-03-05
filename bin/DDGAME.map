@@ -8,8 +8,8 @@ Section          Base   Top    High   Length
 .init            D1A977 D1A9A1            2Ah
 .fini            D1A9A1 D1A9D5            34h
 .text            D1A9D5 D1BAC8          10F3h
-.data            D1BAC8 D1E193          26CBh
-.rodata          D1E193 D1E26B            D8h
+.data            D1BAC8 D1E197          26CFh
+.rodata          D1E197 D1E26F            D8h
 .init_array      000000 000000             0h
 .ctors           000000 000000             0h
 .dtors           000000 000000             0h
@@ -43,10 +43,10 @@ _os_DisableHomeTextBuffer  = D1AA9D
 _os_EnableHomeTextBuffer   = D1AAAF
 _os_GetCSC                 = 021D3C
 _clock                     = D1AAC1
-.missingappvar             = D1E193
-.libloadname               = D1E198
+.missingappvar             = D1E197
+.libloadname               = D1E19C
 .libloadnamelen            = 000007
-.webaddress                = D1E1A0
+.webaddress                = D1E1A4
 ___init_clock              = D1A95C
 __start                    = D1A977
 ___exithl                  = D1A9A1
@@ -63,11 +63,11 @@ _drawWalls                 = D1AE56
 _drawEntities              = D1AFD8
 _drawErrorsAndTotals       = D1B09F
 _doInput                   = D1B376
-JTI7_0                     = D1E1B5
-JTI7_1                     = D1E1C1
-JTI7_2                     = D1E203
-JTI7_3                     = D1E20F
-JTI7_4                     = D1E21B
+JTI7_0                     = D1E1B9
+JTI7_1                     = D1E1C5
+JTI7_2                     = D1E207
+JTI7_3                     = D1E213
+JTI7_4                     = D1E21F
 _setView                   = D1B5C2
 _saveLevel                 = D1B61F
 _loadLevel                 = D1B6CA
@@ -77,9 +77,9 @@ _listLevelPacks            = D1B92D
 _main                      = D1B9AE
 _wallsInRow                = D1BA1A
 _wallsInCol                = D1BA68
-_tileIds                   = D1E227
-_.str                      = D1E237
-_.str.1                    = D1E24C
+_tileIds                   = D1E22B
+_.str                      = D1E23B
+_.str.1                    = D1E250
 _lastWinAnimFrame          = D052C6
 _currentView               = D052CA
 _cursorRow                 = D052CD
@@ -88,10 +88,10 @@ _levelWinAnimFrame         = D052CF
 _levelIndex                = D052D0
 _packNumLevels             = D052D1
 _numLevelPacks             = D052D4
-_.str.24                   = D1E262
-_.str.1.23                 = D1E266
+_.str.24                   = D1E266
+_.str.1.23                 = D1E26A
 _levelPackNames            = D052D5
-_.str.2                    = D1E268
+_.str.2                    = D1E26C
 _packStart                 = D052ED
 _packTitle                 = D052F0
 _packToc                   = D052F3

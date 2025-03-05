@@ -6,8 +6,8 @@ palettes:
       - color: {index: 2, hex: "#ffffff"} # white
       - color: {index: 3, hex: "#dd3745"} # red
       - color: {index: 4, hex: "#e3c054"} # yellow
-      - color: {index: 5, hex: "#656565", exact: true} # light grey
-      - color: {index: 6, hex: "#444444", exact: true} # dark grey
+      - color: {index: 5, hex: "#6a6565", exact: true} # light grey
+      - color: {index: 6, hex: "#484444", exact: true} # dark grey
     images: automatic
 
 converts:
