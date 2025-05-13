@@ -1,1 +1,1 @@
-obj/src/gfx/tileset.c.bc: src\gfx\tileset.c
+obj/src/gfx/tileset.c.bc: src/gfx/tileset.c

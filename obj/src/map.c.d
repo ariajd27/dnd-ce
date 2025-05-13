@@ -1,5 +1,5 @@
-obj/src/map.c.bc: src\map.c C:\Users\aliya\source\CEdev\include\stdlib.h \
-  C:\Users\aliya\source\CEdev\include\cdefs.h \
-  C:\Users\aliya\source\CEdev\include\graphx.h \
-  C:\Users\aliya\source\CEdev\include\stdint.h \
-  C:\Users\aliya\source\CEdev\include\stdbool.h src\map.h
+obj/src/map.c.bc: src/map.c /home/aliya/projects/CEdev/include/stdlib.h \
+  /home/aliya/projects/CEdev/include/cdefs.h \
+  /home/aliya/projects/CEdev/include/graphx.h \
+  /home/aliya/projects/CEdev/include/stdint.h \
+  /home/aliya/projects/CEdev/include/stdbool.h src/map.h
